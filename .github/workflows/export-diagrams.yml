@@ -1,4 +1,4 @@
-name: 📐 Export draw.io → SVG
+name: 📐 Export draw.io → PNG
 
 on:
   push:
@@ -18,17 +18,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Export draw.io → SVG
+      - name: Export draw.io → PNG (fundo branco)
         uses: rlespinasse/drawio-export-action@v2
         with:
           path: diagramas
-          format: svg
+          format: png
           output: exports
           remove-page-suffix: true
+          transparent: false
 
-      - name: Commit SVGs gerados
+      - name: Commit PNGs gerados
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "ci: auto-export drawio → SVG [skip ci]"
-          file_pattern: "diagramas/exports/*.svg"
+          commit_message: "ci: auto-export drawio → PNG fundo branco [skip ci]"
+          file_pattern: "diagramas/exports/*.png"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
