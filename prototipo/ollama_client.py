@@ -1,16 +1,6 @@
-"""Integração com Ollama para conversão NL→SQL.
+"""Conversão de pergunta em linguagem natural para SQL via Ollama local.
 
-O serviço Ollama roda via Docker. Por padrão assumimos que o container
-publica a porta 11434 no host:
-
-    docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
-    docker exec -it ollama ollama pull qwen3.5:2b
-
-Para apontar para outro endereço ou modelo, use as variáveis de ambiente
-OLLAMA_HOST e OLLAMA_MODEL.
-
-Estrutura alinhada ao exemplo do professor (endpoint /api/chat com array
-de mensagens, temperatura 0.0).
+Host e modelo podem ser sobrescritos por OLLAMA_HOST e OLLAMA_MODEL.
 """
 import os
 import re
@@ -18,7 +8,7 @@ import requests
 
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434").rstrip("/")
 OLLAMA_URL = f"{OLLAMA_HOST}/api/chat"
-MODELO_PADRAO = os.environ.get("OLLAMA_MODEL", "qwen3.5:2b")
+MODELO_PADRAO = os.environ.get("OLLAMA_MODEL", "gemma3:1b")
 
 ESQUEMA_SQL = """
 CREATE TABLE confederacao (
@@ -157,68 +147,71 @@ CREATE TABLE evento_de_jogo (
 """
 
 SYSTEM_PROMPT = f"""
-Você é um assistente especializado em SQL PostgreSQL para um banco da Copa do Mundo da FIFA.
-As perguntas do usuário virão em português brasileiro.
+Você é um conversor de linguagem natural para SQL PostgreSQL.
+REGRA ABSOLUTA: sua resposta deve conter SOMENTE o comando SQL, nada mais.
+Nunca escreva texto explicativo, nunca use markdown, nunca use cercas ```.
+Se a pergunta não puder ser respondida com o schema, responda exatamente:
+SELECT 'Não é possível responder com o schema disponível' AS mensagem;
 
-Use exclusivamente o seguinte esquema relacional:
+Schema do banco de dados Copa do Mundo:
 
 {ESQUEMA_SQL}
 
-Convenções importantes do schema:
-- A chave primária de `edicao_da_copa` é `ano` (INTEGER). Não existe coluna `id_edicao`.
-- Países são identificados por `sigla_pais` VARCHAR(3), ex.: 'BRA', 'ARG', 'FRA'.
-- `selecao` tem PK composta `(id_selecao, ano)`. Em todo JOIN com `selecao`,
-  case os DOIS campos (ex.: `pt.selecao1 = s.id_selecao AND pt.ano = s.ano`).
-- `partida` usa `selecao1`/`selecao2` (não mandante/visitante) e divide gols em
-  três pares de colunas: `gols_regulamentares_*`, `gols_prorrogacao_*`, `gols_penaltis_*`.
-- `partida.id_vencedor` já guarda o vencedor de eliminatórias — use diretamente.
-- `convocacao.gols_marcados` é atualizado por trigger; para "artilheiros" basta
-  somar/ordenar essa coluna, sem precisar agregar `evento_de_jogo`.
-- Fases em `fase.tipo_de_fase`: 'Fase de Grupos', 'Oitavas de Final',
-  'Quartas de Final', 'Semifinais', 'Disputa de Terceiro Lugar', 'Final'.
-- Tipos em `evento_de_jogo.tipo_evento`: 'Gol', 'Gol Contra', 'Pênalti Convertido',
+Convenções do schema:
+- PK de `edicao_da_copa` é `ano` (INTEGER). Não existe coluna `id_edicao`.
+- Países: `sigla_pais` VARCHAR(3), ex.: 'BRA', 'ARG', 'FRA'.
+- `selecao` tem PK composta `(id_selecao, ano)`. Em todo JOIN use OS DOIS campos.
+- `partida` usa `selecao1`/`selecao2` e divide gols em três pares de colunas:
+  `gols_regulamentares_*`, `gols_prorrogacao_*`, `gols_penaltis_*`.
+- `partida.id_vencedor` já guarda o vencedor de eliminatórias.
+- `convocacao.gols_marcados` é atualizado por trigger — use para artilheiros.
+- Fases: 'Fase de Grupos', 'Oitavas de Final', 'Quartas de Final',
+  'Semifinais', 'Disputa de Terceiro Lugar', 'Final'.
+- Eventos: 'Gol', 'Gol Contra', 'Pênalti Convertido',
   'Cartão Amarelo', 'Cartão Vermelho', 'Substituição'.
+- Use UPPER(...) = UPPER(%s) ou ILIKE para comparações de texto.
 
-Regras:
-- Gere apenas consultas SQL compatíveis com PostgreSQL.
-- Não invente tabelas nem atributos.
-- Para comparar nomes ou siglas digitados pelo usuário, use UPPER(...) = UPPER(%s)
-  ou ILIKE — os dados no banco têm capitalização ('Brasil', 'BRA') que pode
-  divergir do que o usuário digita.
-- Se a pergunta não puder ser respondida com esse esquema, diga que não é possível.
-- Quando gerar SQL, retorne APENAS o comando SQL, sem explicações, sem markdown,
-  sem cercas ```.
+Exemplos — resposta é APENAS o SQL, sem nenhum texto antes ou depois:
 
-Exemplos:
+Pergunta: Quem foi campeão em 2022?
+SELECT p.nome_pais FROM edicao_da_copa e JOIN selecao s ON e.campea = s.id_selecao AND e.ano = s.ano JOIN pais p ON s.sigla_pais = p.sigla_pais WHERE e.ano = 2022;
 
-Pergunta: "Quem foi campeão em 2022?"
-SQL: SELECT p.nome_pais FROM edicao_da_copa e JOIN selecao s ON e.campea = s.id_selecao AND e.ano = s.ano JOIN pais p ON s.sigla_pais = p.sigla_pais WHERE e.ano = 2022;
+Pergunta: Quantos jogos têm em uma copa?
+SELECT COUNT(*) AS total_partidas FROM partida WHERE ano = 2022;
 
-Pergunta: "Quais jogadores do Brasil foram convocados em 2026?"
-SQL: SELECT j.nome_jogador, c.numero_camisa FROM convocacao c JOIN jogador j ON c.id_jogador = j.id_jogador JOIN selecao s ON c.id_selecao = s.id_selecao AND c.ano = s.ano WHERE c.ano = 2026 AND UPPER(s.sigla_pais) = 'BRA' ORDER BY c.numero_camisa;
+Pergunta: Quais jogadores do Brasil foram convocados em 2026?
+SELECT j.nome_jogador, c.numero_camisa FROM convocacao c JOIN jogador j ON c.id_jogador = j.id_jogador JOIN selecao s ON c.id_selecao = s.id_selecao AND c.ano = s.ano WHERE c.ano = 2026 AND UPPER(s.sigla_pais) = 'BRA' ORDER BY c.numero_camisa;
 
-Pergunta: "Quantos gols Messi fez na Copa de 2022?"
-SQL: SELECT c.gols_marcados FROM convocacao c JOIN jogador j ON c.id_jogador = j.id_jogador WHERE c.ano = 2022 AND j.nome_jogador ILIKE '%Messi%';
+Pergunta: Quantos gols Messi fez na Copa de 2022?
+SELECT c.gols_marcados FROM convocacao c JOIN jogador j ON c.id_jogador = j.id_jogador WHERE c.ano = 2022 AND j.nome_jogador ILIKE '%Messi%';
+
+Pergunta: Quantas seleções participaram da copa de 1998?
+SELECT COUNT(*) AS total_selecoes FROM selecao WHERE ano = 1998;
 """.strip()
 
 
+_PALAVRAS_SQL = re.compile(
+    r"^\s*(SELECT|WITH|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|EXPLAIN)\b",
+    re.IGNORECASE,
+)
+
+
 def _extrair_sql(texto):
-    """Remove cercas markdown e prefixos comuns, mantendo só o SQL."""
     texto = texto.strip()
-    # Remove blocos ```sql ... ``` ou ``` ... ```
     match = re.search(r"```(?:sql)?\s*(.*?)```", texto, re.DOTALL | re.IGNORECASE)
     if match:
         texto = match.group(1).strip()
-    # Remove prefixos comuns que o modelo às vezes adiciona
     texto = re.sub(r"^(SQL\s*:\s*)", "", texto, flags=re.IGNORECASE)
-    return texto.strip().rstrip(";") + ";"
+    texto = texto.strip().rstrip(";") + ";"
+    if not _PALAVRAS_SQL.match(texto):
+        raise ValueError(
+            "O modelo não gerou SQL válido. Tente reformular a pergunta de forma "
+            "mais específica (ex.: 'Quantos jogos houve na copa de 2022?')."
+        )
+    return texto
 
 
-def gerar_sql(pergunta, modelo=MODELO_PADRAO, timeout=120):
-    """Chama o Ollama (endpoint /api/chat) e retorna o SQL gerado.
-
-    Lança ConnectionError se o serviço estiver offline ou retornar erro.
-    """
+def gerar_sql(pergunta, modelo=MODELO_PADRAO, timeout=300):
     mensagens = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": pergunta},

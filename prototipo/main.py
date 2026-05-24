@@ -1,4 +1,3 @@
-"""Ponto de entrada do protótipo CLI do sistema de Copas do Mundo da FIFA."""
 import sys
 import getpass
 
@@ -10,12 +9,7 @@ import queries
 import ollama_client
 
 
-# ============================================================
-# Login e inicialização
-# ============================================================
-
 def fazer_login():
-    """Solicita credenciais e retorna uma instância de Database conectada."""
     print("=" * 60)
     print("  SISTEMA DE COPAS DO MUNDO DA FIFA - PROTÓTIPO CLI")
     print("=" * 60)
@@ -47,22 +41,15 @@ def fazer_login():
             sys.exit(0)
 
 
-# ============================================================
-# Helpers de input
-# ============================================================
-
 def ler_int(msg):
-    """Lê um inteiro do usuário, com tratamento de erro."""
     while True:
         try:
-            valor = input(msg).strip()
-            return int(valor)
+            return int(input(msg).strip())
         except ValueError:
             print("Entrada inválida. Digite um número inteiro.")
 
 
 def ler_str(msg):
-    """Lê uma string não-vazia do usuário."""
     while True:
         valor = input(msg).strip()
         if valor:
@@ -70,22 +57,13 @@ def ler_str(msg):
         print("Entrada vazia. Tente novamente.")
 
 
-# ============================================================
-# Execução de queries
-# ============================================================
-
 def executar_e_exibir(db, sql, params=()):
-    """Executa uma query no banco e exibe o resultado."""
     try:
         colunas, linhas = db.executar(sql, params)
         exibir_resultado(colunas, linhas)
     except psycopg2.Error as e:
         print(f"\n[ERRO SQL] {e}")
 
-
-# ============================================================
-# Menu
-# ============================================================
 
 MENU = """
 ============================================================
@@ -103,13 +81,12 @@ MENU = """
  9. Artilheiros de uma edição
 10. Histórico de uma seleção
 11. [IA] Consulta em linguagem natural -> SQL via Ollama
-12. [IA] Digitar SQL diretamente
+12. Digitar SQL diretamente
 ============================================================
 """
 
 
 def menu_principal(db):
-    """Loop do menu principal."""
     while True:
         print(MENU)
         try:
@@ -190,12 +167,7 @@ def menu_principal(db):
             print(f"\n[ERRO inesperado] {type(e).__name__}: {e}")
 
 
-# ============================================================
-# Modos com IA / SQL livre
-# ============================================================
-
 def consulta_ia(db):
-    """Pergunta em linguagem natural, gera SQL via Ollama e executa."""
     try:
         pergunta = ler_str("Digite sua pergunta em linguagem natural: ")
     except KeyboardInterrupt:
@@ -206,6 +178,9 @@ def consulta_ia(db):
         sql_gerado = ollama_client.gerar_sql(pergunta)
     except ConnectionError as e:
         print(f"\n[ERRO Ollama] {e}")
+        return
+    except ValueError as e:
+        print(f"\n[ERRO] {e}")
         return
     except Exception as e:
         print(f"\n[ERRO inesperado ao chamar Ollama] {e}")
@@ -229,7 +204,6 @@ def consulta_ia(db):
 
 
 def consulta_sql_livre(db):
-    """Permite ao usuário digitar SQL diretamente."""
     print("\nDigite o SQL (linha em branco para confirmar):")
     linhas_sql = []
     try:
@@ -247,16 +221,17 @@ def consulta_sql_livre(db):
         print("Nenhum SQL fornecido.")
         return
 
-    try:
-        colunas, linhas = db.executar(sql_texto)
-        exibir_resultado(colunas, linhas)
-    except psycopg2.Error as e:
-        print(f"\n[ERRO SQL] {e}")
+    comandos = [c.strip() for c in sql_texto.split(";") if c.strip()]
+    for i, cmd in enumerate(comandos, 1):
+        if len(comandos) > 1:
+            print(f"\n--- Comando {i}/{len(comandos)} ---")
+        try:
+            colunas, linhas = db.executar(cmd)
+            exibir_resultado(colunas, linhas)
+        except psycopg2.Error as e:
+            print(f"\n[ERRO SQL] {e}")
+            break
 
-
-# ============================================================
-# Main
-# ============================================================
 
 def main():
     db = None
@@ -264,7 +239,7 @@ def main():
         db = fazer_login()
         menu_principal(db)
     except KeyboardInterrupt:
-        print("\n\nEncerrando graciosamente (Ctrl+C).")
+        print("\n\nEncerrando (Ctrl+C).")
     finally:
         if db is not None:
             db.fechar()
