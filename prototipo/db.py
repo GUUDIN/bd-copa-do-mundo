@@ -1,7 +1,5 @@
 """Módulo de conexão e execução de queries no PostgreSQL."""
 import psycopg2
-from psycopg2 import sql
-from psycopg2.extras import RealDictCursor
 
 
 class Database:
@@ -27,10 +25,6 @@ class Database:
             user=user,
             password=password,
         )
-        # Define o search_path padrão para o schema do projeto
-        with self.conn.cursor() as cur:
-            cur.execute("SET search_path TO copa_mundo, public;")
-        self.conn.commit()
 
     def executar(self, query, params=None):
         """Executa uma query e retorna (colunas, linhas).

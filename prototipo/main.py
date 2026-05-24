@@ -154,9 +154,9 @@ def menu_principal(db):
                 executar_e_exibir(db, sql, params)
 
             elif opcao == "7":
-                pais = ler_str("País da seleção: ")
+                sigla = ler_str("Sigla do país (ex.: BRA): ")
                 ano = ler_int("Ano da edição: ")
-                sql, params = queries.q7_elenco(pais, ano)
+                sql, params = queries.q7_elenco(sigla, ano)
                 executar_e_exibir(db, sql, params)
 
             elif opcao == "8":
@@ -170,8 +170,8 @@ def menu_principal(db):
                 executar_e_exibir(db, sql, params)
 
             elif opcao == "10":
-                pais = ler_str("Nome do país: ")
-                sql, params = queries.q10_historico_selecao(pais)
+                sigla = ler_str("Sigla do país (ex.: BRA): ")
+                sql, params = queries.q10_historico_selecao(sigla)
                 executar_e_exibir(db, sql, params)
 
             elif opcao == "11":

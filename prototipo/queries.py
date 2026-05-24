@@ -1,200 +1,210 @@
 """As 10 consultas SQL parametrizadas do sistema de Copas do Mundo.
 
-Todas as queries usam placeholders %s do psycopg2 para parâmetros.
-Cada função retorna uma tupla (sql, params).
+Cada função retorna uma tupla (sql, params). Os placeholders %s são
+substituídos com segurança pelo psycopg2 — nunca monte SQL com f-string
+a partir de input do usuário.
 """
 
-# 1. Listar edições da Copa do Mundo (ano, país-sede, campeão)
+# 1. Listar todas as edições da Copa do Mundo (ano, país-sede, campeão)
 def q1_edicoes():
     sql = """
-        SELECT e.ano,
-               p.nome AS pais_sede,
-               s_pais.nome AS campea
-        FROM copa_mundo.edicaocopa e
-        JOIN copa_mundo.pais p ON p.id_pais = e.id_pais_sede
-        LEFT JOIN copa_mundo.selecao sel ON sel.id_selecao = e.id_selecao_campea
-        LEFT JOIN copa_mundo.pais s_pais ON s_pais.id_pais = sel.id_pais
-        ORDER BY e.ano;
+        SELECT
+            e.ano,
+            ps.nome_pais AS pais_sede,
+            pc.nome_pais AS selecao_campea
+        FROM edicao_da_copa e
+        JOIN pais ps ON e.pais_sede = ps.sigla_pais
+        LEFT JOIN selecao s_campea ON e.campea = s_campea.id_selecao
+                                  AND e.ano = s_campea.ano
+        LEFT JOIN pais pc ON s_campea.sigla_pais = pc.sigla_pais
+        ORDER BY e.ano DESC;
     """
     return sql, ()
 
 
-# 2. Listar seleções de uma edição
+# 2. Listar as seleções participantes de uma edição
 def q2_selecoes_edicao(ano):
     sql = """
-        SELECT p.nome AS pais,
-               c.nome AS confederacao
-        FROM copa_mundo.participacaoedicao pe
-        JOIN copa_mundo.edicaocopa e ON e.id_edicao = pe.id_edicao
-        JOIN copa_mundo.selecao s ON s.id_selecao = pe.id_selecao
-        JOIN copa_mundo.pais p ON p.id_pais = s.id_pais
-        LEFT JOIN copa_mundo.confederacao c ON c.id_confederacao = s.id_confederacao
-        WHERE e.ano = %s
-        ORDER BY p.nome;
+        SELECT
+            p.nome_pais,
+            s.letra_grupo
+        FROM selecao s
+        JOIN pais p ON s.sigla_pais = p.sigla_pais
+        WHERE s.ano = %s
+        ORDER BY p.nome_pais;
     """
     return sql, (ano,)
 
 
-# 3. Grupos e seleções de uma edição
+# 3. Listar os grupos de uma edição e suas seleções
 def q3_grupos_edicao(ano):
     sql = """
-        SELECT g.letra AS grupo,
-               p.nome AS pais
-        FROM copa_mundo.grupo g
-        JOIN copa_mundo.edicaocopa e ON e.id_edicao = g.id_edicao
-        JOIN copa_mundo.selecaogrupo sg ON sg.id_grupo = g.id_grupo
-        JOIN copa_mundo.selecao s ON s.id_selecao = sg.id_selecao
-        JOIN copa_mundo.pais p ON p.id_pais = s.id_pais
-        WHERE e.ano = %s
-        ORDER BY g.letra, p.nome;
+        SELECT
+            s.letra_grupo AS grupo,
+            p.nome_pais AS selecao
+        FROM selecao s
+        JOIN pais p ON s.sigla_pais = p.sigla_pais
+        WHERE s.ano = %s
+        ORDER BY s.letra_grupo, p.nome_pais;
     """
     return sql, (ano,)
 
 
-# 4. Tabela de classificação de um grupo
+# 4. Exibir a tabela de classificação de um grupo
 def q4_classificacao_grupo(ano, letra):
     sql = """
-        SELECT p.nome AS pais,
-               cg.pontos,
-               cg.vitorias,
-               cg.empates,
-               cg.derrotas,
-               cg.gols_pro,
-               cg.gols_contra,
-               (cg.gols_pro - cg.gols_contra) AS saldo
-        FROM copa_mundo.classificacaogrupo cg
-        JOIN copa_mundo.grupo g ON g.id_grupo = cg.id_grupo
-        JOIN copa_mundo.edicaocopa e ON e.id_edicao = g.id_edicao
-        JOIN copa_mundo.selecao s ON s.id_selecao = cg.id_selecao
-        JOIN copa_mundo.pais p ON p.id_pais = s.id_pais
-        WHERE e.ano = %s AND UPPER(g.letra) = UPPER(%s)
-        ORDER BY cg.pontos DESC,
-                 (cg.gols_pro - cg.gols_contra) DESC,
-                 cg.gols_pro DESC;
+        SELECT
+            p.nome_pais,
+            sg.pontos,
+            sg.gols_pro,
+            sg.gols_contra,
+            sg.saldo_gols
+        FROM selecao_grupo sg
+        JOIN selecao s ON sg.id_selecao = s.id_selecao AND sg.ano = s.ano
+        JOIN pais p ON s.sigla_pais = p.sigla_pais
+        WHERE sg.ano = %s AND UPPER(sg.letra_grupo) = UPPER(%s)
+        ORDER BY sg.pontos DESC, sg.saldo_gols DESC, sg.gols_pro DESC;
     """
     return sql, (ano, letra)
 
 
-# 5. Partidas de uma edição
+# 5. Listar todas as partidas de uma edição
 def q5_partidas_edicao(ano):
     sql = """
-        SELECT pa.id_partida,
-               pa.data_hora,
-               f.nome AS fase,
-               p1.nome AS mandante,
-               pa.gols_mandante,
-               pa.gols_visitante,
-               p2.nome AS visitante,
-               est.nome AS estadio
-        FROM copa_mundo.partida pa
-        JOIN copa_mundo.edicaocopa e ON e.id_edicao = pa.id_edicao
-        JOIN copa_mundo.fase f ON f.id_fase = pa.id_fase
-        JOIN copa_mundo.selecao s1 ON s1.id_selecao = pa.id_selecao_mandante
-        JOIN copa_mundo.pais p1 ON p1.id_pais = s1.id_pais
-        JOIN copa_mundo.selecao s2 ON s2.id_selecao = pa.id_selecao_visitante
-        JOIN copa_mundo.pais p2 ON p2.id_pais = s2.id_pais
-        LEFT JOIN copa_mundo.estadio est ON est.id_estadio = pa.id_estadio
-        WHERE e.ano = %s
-        ORDER BY pa.data_hora;
+        SELECT
+            pt.tipo_de_fase,
+            pt.data_hora,
+            est.cidade,
+            p1.nome_pais AS mandante,
+            pt.gols_regulamentares_selecao1 AS gols_mandante,
+            pt.gols_regulamentares_selecao2 AS gols_visitante,
+            p2.nome_pais AS visitante
+        FROM partida pt
+        JOIN estadio est ON pt.id_estadio = est.id_estadio
+        JOIN selecao s1 ON pt.selecao1 = s1.id_selecao AND pt.ano = s1.ano
+        JOIN pais p1 ON s1.sigla_pais = p1.sigla_pais
+        JOIN selecao s2 ON pt.selecao2 = s2.id_selecao AND pt.ano = s2.ano
+        JOIN pais p2 ON s2.sigla_pais = p2.sigla_pais
+        WHERE pt.ano = %s
+        ORDER BY pt.data_hora;
     """
     return sql, (ano,)
 
 
-# 6. Caminho do mata-mata
+# 6. Exibir o caminho do mata-mata
 def q6_mata_mata(ano):
     sql = """
-        SELECT f.nome AS fase,
-               pa.data_hora,
-               p1.nome AS mandante,
-               pa.gols_mandante,
-               pa.gols_visitante,
-               p2.nome AS visitante
-        FROM copa_mundo.partida pa
-        JOIN copa_mundo.edicaocopa e ON e.id_edicao = pa.id_edicao
-        JOIN copa_mundo.fase f ON f.id_fase = pa.id_fase
-        JOIN copa_mundo.selecao s1 ON s1.id_selecao = pa.id_selecao_mandante
-        JOIN copa_mundo.pais p1 ON p1.id_pais = s1.id_pais
-        JOIN copa_mundo.selecao s2 ON s2.id_selecao = pa.id_selecao_visitante
-        JOIN copa_mundo.pais p2 ON p2.id_pais = s2.id_pais
-        WHERE e.ano = %s
-          AND LOWER(f.nome) NOT LIKE '%%grupo%%'
-          AND LOWER(f.nome) NOT LIKE '%%fase de grupo%%'
-        ORDER BY pa.data_hora;
+        SELECT
+            pt.tipo_de_fase,
+            pt.data_hora,
+            pv.nome_pais AS selecao_classificada
+        FROM partida pt
+        JOIN selecao sv ON pt.id_vencedor = sv.id_selecao AND pt.ano = sv.ano
+        JOIN pais pv ON sv.sigla_pais = pv.sigla_pais
+        WHERE pt.ano = %s AND pt.tipo_de_fase <> 'Fase de Grupos'
+        ORDER BY pt.data_hora;
     """
     return sql, (ano,)
 
 
-# 7. Elenco de uma seleção em uma edição
-def q7_elenco(pais, ano):
+# 7. Listar o elenco convocado de uma seleção em uma edição
+def q7_elenco(sigla_pais, ano):
     sql = """
-        SELECT j.nome AS jogador,
-               c.numero_camisa,
-               c.posicao
-        FROM copa_mundo.convocacao c
-        JOIN copa_mundo.participacaoedicao pe ON pe.id_participacao = c.id_participacao
-        JOIN copa_mundo.edicaocopa e ON e.id_edicao = pe.id_edicao
-        JOIN copa_mundo.selecao s ON s.id_selecao = pe.id_selecao
-        JOIN copa_mundo.pais p ON p.id_pais = s.id_pais
-        JOIN copa_mundo.jogador j ON j.id_jogador = c.id_jogador
-        WHERE LOWER(p.nome) = LOWER(%s) AND e.ano = %s
+        SELECT
+            c.numero_camisa,
+            j.nome_jogador,
+            c.gols_marcados
+        FROM convocacao c
+        JOIN jogador j ON c.id_jogador = j.id_jogador
+        JOIN selecao s ON c.id_selecao = s.id_selecao AND c.ano = s.ano
+        WHERE c.ano = %s AND UPPER(s.sigla_pais) = UPPER(%s)
         ORDER BY c.numero_camisa;
     """
-    return sql, (pais, ano)
+    return sql, (ano, sigla_pais)
 
 
-# 8. Eventos de uma partida
+# 8. Listar os eventos de uma partida
 def q8_eventos_partida(id_partida):
     sql = """
-        SELECT ev.minuto,
-               ev.tipo,
-               j.nome AS jogador,
-               p.nome AS selecao,
-               ev.descricao
-        FROM copa_mundo.eventojogo ev
-        LEFT JOIN copa_mundo.jogador j ON j.id_jogador = ev.id_jogador
-        LEFT JOIN copa_mundo.selecao s ON s.id_selecao = ev.id_selecao
-        LEFT JOIN copa_mundo.pais p ON p.id_pais = s.id_pais
-        WHERE ev.id_partida = %s
-        ORDER BY ev.minuto;
+        SELECT
+            e.tempo,
+            e.tipo_evento,
+            j.nome_jogador
+        FROM evento_de_jogo e
+        LEFT JOIN jogador j ON e.id_jogador = j.id_jogador
+        WHERE e.id_partida = %s
+        ORDER BY e.tempo;
     """
     return sql, (id_partida,)
 
 
-# 9. Artilheiros de uma edição
+# 9. Consultar artilheiros de uma edição
 def q9_artilheiros(ano):
     sql = """
-        SELECT j.nome AS jogador,
-               p.nome AS selecao,
-               COUNT(*) AS gols
-        FROM copa_mundo.eventojogo ev
-        JOIN copa_mundo.partida pa ON pa.id_partida = ev.id_partida
-        JOIN copa_mundo.edicaocopa e ON e.id_edicao = pa.id_edicao
-        JOIN copa_mundo.jogador j ON j.id_jogador = ev.id_jogador
-        LEFT JOIN copa_mundo.selecao s ON s.id_selecao = ev.id_selecao
-        LEFT JOIN copa_mundo.pais p ON p.id_pais = s.id_pais
-        WHERE e.ano = %s
-          AND LOWER(ev.tipo) IN ('gol', 'goal', 'gol_contra', 'penalti')
-          AND LOWER(ev.tipo) NOT LIKE '%%contra%%'
-        GROUP BY j.nome, p.nome
-        ORDER BY gols DESC, j.nome
-        LIMIT 50;
+        SELECT
+            j.nome_jogador,
+            p.nome_pais,
+            c.gols_marcados
+        FROM convocacao c
+        JOIN jogador j ON c.id_jogador = j.id_jogador
+        JOIN selecao s ON c.id_selecao = s.id_selecao AND c.ano = s.ano
+        JOIN pais p ON s.sigla_pais = p.sigla_pais
+        WHERE c.ano = %s AND c.gols_marcados > 0
+        ORDER BY c.gols_marcados DESC
+        LIMIT 10;
     """
     return sql, (ano,)
 
 
-# 10. Histórico de uma seleção
-def q10_historico_selecao(pais):
+# 10. Histórico de uma seleção (participações, títulos, jogos, V/E/D)
+def q10_historico_selecao(sigla_pais):
     sql = """
-        SELECT e.ano,
-               ps.nome AS pais_sede,
-               f.nome AS melhor_fase
-        FROM copa_mundo.participacaoedicao pe
-        JOIN copa_mundo.selecao s ON s.id_selecao = pe.id_selecao
-        JOIN copa_mundo.pais p ON p.id_pais = s.id_pais
-        JOIN copa_mundo.edicaocopa e ON e.id_edicao = pe.id_edicao
-        JOIN copa_mundo.pais ps ON ps.id_pais = e.id_pais_sede
-        LEFT JOIN copa_mundo.fase f ON f.id_fase = pe.id_fase_final
-        WHERE LOWER(p.nome) = LOWER(%s)
-        ORDER BY e.ano;
+        WITH historico_partidas AS (
+            SELECT
+                s.sigla_pais,
+                COUNT(pt.id_partida) AS total_jogos,
+                SUM(CASE
+                    WHEN pt.id_vencedor = s.id_selecao THEN 1
+                    WHEN pt.id_vencedor IS NULL
+                         AND pt.selecao1 = s.id_selecao
+                         AND pt.gols_regulamentares_selecao1 > pt.gols_regulamentares_selecao2 THEN 1
+                    WHEN pt.id_vencedor IS NULL
+                         AND pt.selecao2 = s.id_selecao
+                         AND pt.gols_regulamentares_selecao2 > pt.gols_regulamentares_selecao1 THEN 1
+                    ELSE 0 END) AS vitorias,
+                SUM(CASE
+                    WHEN pt.id_vencedor IS NULL
+                         AND pt.gols_regulamentares_selecao1 = pt.gols_regulamentares_selecao2 THEN 1
+                    ELSE 0 END) AS empates,
+                SUM(CASE
+                    WHEN pt.id_vencedor IS NOT NULL AND pt.id_vencedor <> s.id_selecao THEN 1
+                    WHEN pt.id_vencedor IS NULL
+                         AND pt.selecao1 = s.id_selecao
+                         AND pt.gols_regulamentares_selecao1 < pt.gols_regulamentares_selecao2 THEN 1
+                    WHEN pt.id_vencedor IS NULL
+                         AND pt.selecao2 = s.id_selecao
+                         AND pt.gols_regulamentares_selecao2 < pt.gols_regulamentares_selecao1 THEN 1
+                    ELSE 0 END) AS derrotas
+            FROM selecao s
+            LEFT JOIN partida pt
+                   ON (s.id_selecao = pt.selecao1 OR s.id_selecao = pt.selecao2)
+                  AND s.ano = pt.ano
+            WHERE UPPER(s.sigla_pais) = UPPER(%s)
+            GROUP BY s.sigla_pais
+        )
+        SELECT
+            p.nome_pais,
+            (SELECT COUNT(*) FROM selecao
+              WHERE UPPER(sigla_pais) = UPPER(%s))             AS participacoes_em_copas,
+            (SELECT COUNT(*)
+               FROM edicao_da_copa e
+               JOIN selecao s ON e.campea = s.id_selecao AND e.ano = s.ano
+              WHERE UPPER(s.sigla_pais) = UPPER(%s))           AS titulos_campeao,
+            hp.total_jogos,
+            hp.vitorias,
+            hp.empates,
+            hp.derrotas
+        FROM historico_partidas hp
+        JOIN pais p ON hp.sigla_pais = p.sigla_pais;
     """
-    return sql, (pais,)
+    return sql, (sigla_pais, sigla_pais, sigla_pais)

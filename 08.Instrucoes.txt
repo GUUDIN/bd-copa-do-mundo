@@ -1,8 +1,8 @@
 SCC0640 – Bases de Dados – Projeto Copa do Mundo FIFA
 
 MEMBROS DO GRUPO:
-- [Nome 1] – NUSP
-- [André Santos Messias] – NUSP
+- [João Marcelo Moreira Trovão Filho] – 13676332
+- [André Luiz Santos Messias] – NUSP
 - [Mateus Santos Messias] – 12548000
 - [Pedro Borges Gudin] – 12547997
 
