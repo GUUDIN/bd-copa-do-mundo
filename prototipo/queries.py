@@ -1,11 +1,7 @@
-"""As 10 consultas SQL parametrizadas do sistema de Copas do Mundo.
+"""As 10 consultas pedidas no enunciado."""
 
-Cada função retorna uma tupla (sql, params). Os placeholders %s são
-substituídos com segurança pelo psycopg2 — nunca monte SQL com f-string
-a partir de input do usuário.
-"""
 
-# 1. Listar todas as edições da Copa do Mundo (ano, país-sede, campeão)
+# 1. Edições da Copa do Mundo (ano, país-sede, campeão)
 def q1_edicoes():
     sql = """
         SELECT
@@ -22,7 +18,7 @@ def q1_edicoes():
     return sql, ()
 
 
-# 2. Listar as seleções participantes de uma edição
+# 2. Seleções participantes de uma edição
 def q2_selecoes_edicao(ano):
     sql = """
         SELECT
@@ -36,7 +32,7 @@ def q2_selecoes_edicao(ano):
     return sql, (ano,)
 
 
-# 3. Listar os grupos de uma edição e suas seleções
+# 3. Grupos de uma edição e suas seleções
 def q3_grupos_edicao(ano):
     sql = """
         SELECT
@@ -50,7 +46,7 @@ def q3_grupos_edicao(ano):
     return sql, (ano,)
 
 
-# 4. Exibir a tabela de classificação de um grupo
+# 4. Tabela de classificação de um grupo
 def q4_classificacao_grupo(ano, letra):
     sql = """
         SELECT
@@ -68,7 +64,7 @@ def q4_classificacao_grupo(ano, letra):
     return sql, (ano, letra)
 
 
-# 5. Listar todas as partidas de uma edição
+# 5. Partidas de uma edição
 def q5_partidas_edicao(ano):
     sql = """
         SELECT
@@ -91,7 +87,7 @@ def q5_partidas_edicao(ano):
     return sql, (ano,)
 
 
-# 6. Exibir o caminho do mata-mata
+# 6. Caminho do mata-mata
 def q6_mata_mata(ano):
     sql = """
         SELECT
@@ -107,7 +103,7 @@ def q6_mata_mata(ano):
     return sql, (ano,)
 
 
-# 7. Listar o elenco convocado de uma seleção em uma edição
+# 7. Elenco convocado de uma seleção em uma edição
 def q7_elenco(sigla_pais, ano):
     sql = """
         SELECT
@@ -123,7 +119,7 @@ def q7_elenco(sigla_pais, ano):
     return sql, (ano, sigla_pais)
 
 
-# 8. Listar os eventos de uma partida
+# 8. Eventos de uma partida
 def q8_eventos_partida(id_partida):
     sql = """
         SELECT
@@ -138,7 +134,7 @@ def q8_eventos_partida(id_partida):
     return sql, (id_partida,)
 
 
-# 9. Consultar artilheiros de uma edição
+# 9. Artilheiros de uma edição
 def q9_artilheiros(ano):
     sql = """
         SELECT
