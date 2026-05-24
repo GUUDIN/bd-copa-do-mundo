@@ -24,14 +24,14 @@ bd-copa-do-mundo/
 ├── diagramas/
 │   ├── 01.ER.drawio          ← MER (edite aqui no draw.io)
 │   ├── 02.Relacional.drawio  ← Modelo Relacional
-│   └── exports/              ← SVGs gerados automaticamente pelo CI
+│   └── exports/              ← PNGs gerados automaticamente pelo CI (fundo branco)
 ├── sql/
 │   ├── 05.DDL.sql            ← Criação das tabelas + triggers
 │   ├── 06.DML.sql            ← Dados de teste
 │   └── consultas.sql         ← As 10 consultas requeridas
 ├── prototipo/                ← Código Python do protótipo
 ├── .github/workflows/
-│   └── export-diagrams.yml   ← CI: drawio → SVG automático
+│   └── export-diagrams.yml   ← CI: drawio → PNG (fundo branco)
 └── 08.Instrucoes.txt
 ```
 
@@ -39,7 +39,7 @@ bd-copa-do-mundo/
 > 1. Abra `diagramas/01.ER.drawio` ou `02.Relacional.drawio` no [draw.io](https://app.diagrams.net)  
 > 2. Edite e salve  
 > 3. Faça commit + push  
-> 4. O GitHub Action exporta automaticamente os SVGs — o README é atualizado 🎉
+> 4. O GitHub Action exporta automaticamente os PNGs — o README é atualizado 🎉
 
 ---
 
@@ -49,17 +49,17 @@ bd-copa-do-mundo/
 
 > 🔄 Atualizado automaticamente via CI quando o `.drawio` é modificado
 
-![MER](diagramas/exports/01.ER.svg)
+![MER](diagramas/exports/01.ER.png)
 
-_Caso o SVG não carregue, [abra o diagrama no viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FSEU_USUARIO%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2F01.ER.drawio)_
+_Caso a imagem não carregue, [abra o diagrama no viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FSEU_USUARIO%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2F01.ER.drawio)_
 
 ---
 
 ### Modelo Relacional
 
-![Relacional](diagramas/exports/02.Relacional.svg)
+![Relacional](diagramas/exports/02.Relacional.png)
 
-_Caso o SVG não carregue, [abra no viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FSEU_USUARIO%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2F02.Relacional.drawio)_
+_Caso a imagem não carregue, [abra no viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FSEU_USUARIO%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2F02.Relacional.drawio)_
 
 ---
 
