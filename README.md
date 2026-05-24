@@ -51,7 +51,7 @@ bd-copa-do-mundo/
 
 ![MER](diagramas/exports/01.ER.png)
 
-_Caso a imagem não carregue, [abra o diagrama no viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FSEU_USUARIO%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2F01.ER.drawio)_
+_Caso a imagem não carregue, [abra o diagrama no viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FGUUDIN%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2F01.ER.drawio)_
 
 ---
 
@@ -59,7 +59,7 @@ _Caso a imagem não carregue, [abra o diagrama no viewer →](https://viewer.dia
 
 ![Relacional](diagramas/exports/02.Relacional.png)
 
-_Caso a imagem não carregue, [abra no viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FSEU_USUARIO%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2F02.Relacional.drawio)_
+_Caso a imagem não carregue, [abra no viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FGUUDIN%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2F02.Relacional.drawio)_
 
 ---
 
