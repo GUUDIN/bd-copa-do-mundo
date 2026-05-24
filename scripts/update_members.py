@@ -37,8 +37,11 @@ def parse_members(path: Path) -> list[tuple[str, str]]:
 
     members = []
     for line in m.group(1).splitlines():
-        # Formato: - [Nome Completo] – NUSP_ou_número
-        match = re.match(r"\s*[-•]\s*\[(.+?)\]\s*[–\-]\s*(.+)", line)
+        # Aceita "- [Nome] – NUSP" ou "- Nome – NUSP"
+        match = (
+            re.match(r"\s*[-•]\s*\[(.+?)\]\s*[–\-]\s*(.+)", line)
+            or re.match(r"\s*[-•]\s*(.+?)\s+[–]\s*(.+)", line)
+        )
         if not match:
             continue
         name = match.group(1).strip()
