@@ -1,60 +1,324 @@
 <mxfile host="app.diagrams.net" pages="1">
   <diagram id="Djz6UlUsGs-KlBevEPWf" name="Relacional">
-    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="2200" pageHeight="1200" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="_KglgopSU6I9OmG3ns4V-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Edição = {&lt;u&gt;Ano,&lt;/u&gt; País-sede, Data_Início, Data_Final, Campeã*, Vice*, Terceiro}&amp;nbsp;&lt;/font&gt;" vertex="1">
+
+        <!-- ===== ENTIDADES (text boxes) ===== -->
+
+        <!-- Edição da Copa -->
+        <mxCell id="_KglgopSU6I9OmG3ns4V-1" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Edição = {&lt;u&gt;Ano,&lt;/u&gt; País-sede, Data_Início, Data_Final, Campeã*, Vice*, Terceiro}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
           <mxGeometry height="30" width="580" x="80" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="_KglgopSU6I9OmG3ns4V-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Cidade-Sede = {&lt;u&gt;Cidade, Estado&lt;/u&gt;}&amp;nbsp;&lt;/font&gt;" vertex="1">
+
+        <!-- Cidade-Sede -->
+        <mxCell id="_KglgopSU6I9OmG3ns4V-3" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Cidade-Sede = {&lt;u&gt;Cidade, Estado&lt;/u&gt;}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
           <mxGeometry height="30" width="280" x="920" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="_KglgopSU6I9OmG3ns4V-5" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Estádio = { &lt;u&gt;IdEstádio&lt;/u&gt;, Cidade, Estado}&lt;/font&gt;" vertex="1">
+
+        <!-- Estádio -->
+        <mxCell id="_KglgopSU6I9OmG3ns4V-5" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Estádio = { &lt;u&gt;IdEstádio&lt;/u&gt;, Cidade, Estado}&lt;/font&gt;"
+          vertex="1">
           <mxGeometry height="30" width="270" x="925" y="140" as="geometry" />
         </mxCell>
-        <mxCell id="_KglgopSU6I9OmG3ns4V-6" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Fase = {&lt;u&gt;TipoFase&lt;/u&gt;, &lt;u&gt;Ano&lt;/u&gt;}&amp;nbsp;&lt;/font&gt;" vertex="1">
+
+        <!-- Fase -->
+        <mxCell id="_KglgopSU6I9OmG3ns4V-6" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Fase = {&lt;u&gt;TipoFase&lt;/u&gt;, &lt;u&gt;Ano&lt;/u&gt;}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
           <mxGeometry height="30" width="170" x="350" y="160" as="geometry" />
         </mxCell>
-        <mxCell id="_KglgopSU6I9OmG3ns4V-8" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Grupo = {&lt;u&gt;LetraGrupo&lt;/u&gt;, &lt;u&gt;Ano&lt;/u&gt;}&amp;nbsp;&lt;/font&gt;" vertex="1">
+
+        <!-- Grupo -->
+        <mxCell id="_KglgopSU6I9OmG3ns4V-8" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Grupo = {&lt;u&gt;LetraGrupo&lt;/u&gt;, &lt;u&gt;Ano&lt;/u&gt;}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
           <mxGeometry height="30" width="210" x="80" y="160" as="geometry" />
         </mxCell>
-        <mxCell id="_KglgopSU6I9OmG3ns4V-10" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Confederação = {&lt;u&gt;IdConfederação&lt;/u&gt;, NomeConfederação}&amp;nbsp;&lt;/font&gt;" vertex="1">
+
+        <!-- Confederação -->
+        <mxCell id="_KglgopSU6I9OmG3ns4V-10" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Confederação = {&lt;u&gt;IdConfederação&lt;/u&gt;, NomeConfederação}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
           <mxGeometry height="30" width="390" x="80" y="230" as="geometry" />
         </mxCell>
-        <mxCell id="_KglgopSU6I9OmG3ns4V-11" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;País = {&lt;u&gt;SiglaPaís&lt;/u&gt;, NomePaís, IdConfederação*}&amp;nbsp;&lt;/font&gt;" vertex="1">
+
+        <!-- País -->
+        <mxCell id="_KglgopSU6I9OmG3ns4V-11" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;País = {&lt;u&gt;SiglaPaís&lt;/u&gt;, NomePaís, IdConfederação*}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
           <mxGeometry height="30" width="390" x="80" y="280" as="geometry" />
         </mxCell>
-        <mxCell id="_KglgopSU6I9OmG3ns4V-14" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Seleção = {&lt;u&gt;IdSeleção, Ano&lt;/u&gt;, LetraGrupo*, IdTécnico*,  SiglaPaís*,}&amp;nbsp;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="30" width="450" x="50" y="460" as="geometry" />
-        </mxCell>
-        <mxCell id="_KglgopSU6I9OmG3ns4V-16" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Técnico = {&lt;u&gt;IdTécnico&lt;/u&gt;, NomeTécnico}&amp;nbsp;&lt;/font&gt;" vertex="1">
+
+        <!-- Técnico -->
+        <mxCell id="_KglgopSU6I9OmG3ns4V-16" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Técnico = {&lt;u&gt;IdTécnico&lt;/u&gt;, NomeTécnico}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
           <mxGeometry height="30" width="260" x="80" y="330" as="geometry" />
         </mxCell>
-        <mxCell id="_KglgopSU6I9OmG3ns4V-18" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Jogador = {&lt;u&gt;IdJogador,&lt;/u&gt; Nome}&amp;nbsp;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="30" width="470" x="80" y="740" as="geometry" />
+
+        <!-- Seleção -->
+        <mxCell id="_KglgopSU6I9OmG3ns4V-14" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Seleção = {&lt;u&gt;IdSeleção, Ano&lt;/u&gt;, LetraGrupo*, IdTécnico*,  SiglaPaís*,}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
+          <mxGeometry height="30" width="450" x="50" y="460" as="geometry" />
         </mxCell>
-        <mxCell id="_KglgopSU6I9OmG3ns4V-21" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Árbitro = {&lt;u&gt;IdÁrbitro&lt;/u&gt;}&amp;nbsp;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="30" width="145" x="545" y="380" as="geometry" />
-        </mxCell>
-        <mxCell id="_KglgopSU6I9OmG3ns4V-29" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Evento de Jogo= {&lt;u&gt;IdEvento,&lt;/u&gt;&amp;nbsp;IdJogador,&amp;nbsp;&lt;u&gt;IdPartida,&lt;/u&gt;TipoEvento, Tempo}&amp;nbsp;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="30" width="590" x="80" y="850" as="geometry" />
-        </mxCell>
-        <mxCell id="_KglgopSU6I9OmG3ns4V-30" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Arbitragem-Partida = {&lt;u&gt;IdÁrbitro, IdPartida,&lt;/u&gt;&amp;nbsp;Função}&amp;nbsp;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="30" width="370" x="540" y="440" as="geometry" />
-        </mxCell>
-        <mxCell id="_KglgopSU6I9OmG3ns4V-37" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Cidade-Sedia-Edição= {&lt;u&gt;Ano, Cidade, Estado&lt;/u&gt;}&amp;nbsp;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="30" width="335" x="550" y="130" as="geometry" />
-        </mxCell>
-        <mxCell id="_KglgopSU6I9OmG3ns4V-39" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Partida = {&lt;u&gt;IdPartida,&lt;/u&gt; TipoFase*, Ano*, IdEstádio*, IdSeleção1*, IdSeleção2*, GolsRegulamentares1, GolsRegulamentares2, GolsProrrogação1, GolsProrrogação2, GolsPenalti1, GolsPenalti2, IdVencedor, Data/hora}&amp;nbsp;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="30" width="1595" x="545" y="340" as="geometry" />
-        </mxCell>
-        <mxCell id="GKZDDnoSPcLRndJQGc5z-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Convocação = {&lt;u&gt;Ano,&lt;/u&gt; IdSeleção,&lt;u&gt; IdJogador,&lt;/u&gt;&amp;nbsp;NroCamisa, GolsMarcados}&amp;nbsp;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="30" width="590" x="80" y="1010" as="geometry" />
-        </mxCell>
-        <mxCell id="sl48ZR6j5Mv-N_ht3WDS-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Seleção-Grupo = {&lt;u&gt;IdSeleção, Ano, LetraGrupo&lt;/u&gt;, Pontos, GolsPro, GolsContra, SaldoGols}&amp;nbsp;&lt;/font&gt;" vertex="1">
+
+        <!-- Seleção-Grupo -->
+        <mxCell id="sl48ZR6j5Mv-N_ht3WDS-1" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Seleção-Grupo = {&lt;u&gt;IdSeleção, Ano, LetraGrupo&lt;/u&gt;, Pontos, GolsPro, GolsContra, SaldoGols}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
           <mxGeometry height="30" width="620" x="50" y="570" as="geometry" />
         </mxCell>
+
+        <!-- Árbitro -->
+        <mxCell id="_KglgopSU6I9OmG3ns4V-21" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Árbitro = {&lt;u&gt;IdÁrbitro&lt;/u&gt;}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
+          <mxGeometry height="30" width="145" x="545" y="380" as="geometry" />
+        </mxCell>
+
+        <!-- Partida -->
+        <mxCell id="_KglgopSU6I9OmG3ns4V-39" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Partida = {&lt;u&gt;IdPartida,&lt;/u&gt; TipoFase*, Ano*, IdEstádio*, IdSeleção1*, IdSeleção2*, GolsRegulamentares1, GolsRegulamentares2, GolsProrrogação1, GolsProrrogação2, GolsPenalti1, GolsPenalti2, IdVencedor, Data/hora}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
+          <mxGeometry height="30" width="1595" x="545" y="340" as="geometry" />
+        </mxCell>
+
+        <!-- Arbitragem-Partida -->
+        <mxCell id="_KglgopSU6I9OmG3ns4V-30" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Arbitragem-Partida = {&lt;u&gt;IdÁrbitro, IdPartida,&lt;/u&gt;&amp;nbsp;Função}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
+          <mxGeometry height="30" width="370" x="540" y="440" as="geometry" />
+        </mxCell>
+
+        <!-- Cidade-Sedia-Edição -->
+        <mxCell id="_KglgopSU6I9OmG3ns4V-37" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Cidade-Sedia-Edição= {&lt;u&gt;Ano, Cidade, Estado&lt;/u&gt;}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
+          <mxGeometry height="30" width="335" x="550" y="130" as="geometry" />
+        </mxCell>
+
+        <!-- Jogador -->
+        <mxCell id="_KglgopSU6I9OmG3ns4V-18" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Jogador = {&lt;u&gt;IdJogador,&lt;/u&gt; Nome}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
+          <mxGeometry height="30" width="470" x="80" y="740" as="geometry" />
+        </mxCell>
+
+        <!-- Evento de Jogo -->
+        <mxCell id="_KglgopSU6I9OmG3ns4V-29" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Evento de Jogo= {&lt;u&gt;IdEvento,&lt;/u&gt;&amp;nbsp;IdJogador,&amp;nbsp;&lt;u&gt;IdPartida,&lt;/u&gt;TipoEvento, Tempo}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
+          <mxGeometry height="30" width="590" x="80" y="850" as="geometry" />
+        </mxCell>
+
+        <!-- Convocação -->
+        <mxCell id="GKZDDnoSPcLRndJQGc5z-1" parent="1"
+          style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=11;labelBackgroundColor=none;"
+          value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Convocação = {&lt;u&gt;Ano,&lt;/u&gt; IdSeleção,&lt;u&gt; IdJogador,&lt;/u&gt;&amp;nbsp;NroCamisa, GolsMarcados}&amp;nbsp;&lt;/font&gt;"
+          vertex="1">
+          <mxGeometry height="30" width="590" x="80" y="1010" as="geometry" />
+        </mxCell>
+
+        <!-- ===== ARESTAS (FK arrows): child -> parent ===== -->
+        <!-- Style: dashed arrow pointing to referenced table -->
+
+        <!-- País -> Confederação (IdConfederação*) -->
+        <mxCell id="fk-pais-conf" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-11"
+          target="_KglgopSU6I9OmG3ns4V-10"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Seleção -> País (SiglaPaís*) -->
+        <mxCell id="fk-selecao-pais" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-14"
+          target="_KglgopSU6I9OmG3ns4V-11"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0.1;exitY=0;exitDx=0;exitDy=0;entryX=0.1;entryY=1;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Seleção -> Técnico (IdTécnico*) -->
+        <mxCell id="fk-selecao-tecnico" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-14"
+          target="_KglgopSU6I9OmG3ns4V-16"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0.3;exitY=0;exitDx=0;exitDy=0;entryX=0.3;entryY=1;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Seleção -> Grupo (LetraGrupo*, Ano) -->
+        <mxCell id="fk-selecao-grupo" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-14"
+          target="_KglgopSU6I9OmG3ns4V-8"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Grupo -> Edição (Ano FK) -->
+        <mxCell id="fk-grupo-edicao" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-8"
+          target="_KglgopSU6I9OmG3ns4V-1"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.2;entryY=1;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Fase -> Edição (Ano FK) -->
+        <mxCell id="fk-fase-edicao" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-6"
+          target="_KglgopSU6I9OmG3ns4V-1"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Cidade-Sedia-Edição -> Edição (Ano FK) -->
+        <mxCell id="fk-cse-edicao" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-37"
+          target="_KglgopSU6I9OmG3ns4V-1"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Cidade-Sedia-Edição -> Cidade-Sede (Cidade, Estado FK) -->
+        <mxCell id="fk-cse-cs" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-37"
+          target="_KglgopSU6I9OmG3ns4V-3"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Estádio -> Cidade-Sede (Cidade, Estado FK) -->
+        <mxCell id="fk-estadio-cs" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-5"
+          target="_KglgopSU6I9OmG3ns4V-3"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Seleção-Grupo -> Seleção (IdSeleção, Ano FK) -->
+        <mxCell id="fk-sg-selecao" parent="1" edge="1"
+          source="sl48ZR6j5Mv-N_ht3WDS-1"
+          target="_KglgopSU6I9OmG3ns4V-14"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0.1;exitY=0;exitDx=0;exitDy=0;entryX=0.1;entryY=1;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Seleção-Grupo -> Grupo (LetraGrupo, Ano FK) -->
+        <mxCell id="fk-sg-grupo" parent="1" edge="1"
+          source="sl48ZR6j5Mv-N_ht3WDS-1"
+          target="_KglgopSU6I9OmG3ns4V-8"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Convocação -> Seleção (IdSeleção, Ano FK) -->
+        <mxCell id="fk-conv-selecao" parent="1" edge="1"
+          source="GKZDDnoSPcLRndJQGc5z-1"
+          target="_KglgopSU6I9OmG3ns4V-14"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0.1;exitY=0;exitDx=0;exitDy=0;entryX=0.1;entryY=1;entryDx=45;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Convocação -> Jogador (IdJogador FK) -->
+        <mxCell id="fk-conv-jogador" parent="1" edge="1"
+          source="GKZDDnoSPcLRndJQGc5z-1"
+          target="_KglgopSU6I9OmG3ns4V-18"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Partida -> Fase (TipoFase*, Ano* FK) -->
+        <mxCell id="fk-partida-fase" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-39"
+          target="_KglgopSU6I9OmG3ns4V-6"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Partida -> Estádio (IdEstádio* FK) -->
+        <mxCell id="fk-partida-estadio" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-39"
+          target="_KglgopSU6I9OmG3ns4V-5"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0.85;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Partida -> Seleção (IdSeleção1*, IdSeleção2*, IdVencedor* FK) -->
+        <mxCell id="fk-partida-selecao" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-39"
+          target="_KglgopSU6I9OmG3ns4V-14"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Arbitragem-Partida -> Árbitro (IdÁrbitro FK) -->
+        <mxCell id="fk-ap-arbitro" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-30"
+          target="_KglgopSU6I9OmG3ns4V-21"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;endFill=0;fontSize=10;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Arbitragem-Partida -> Partida (IdPartida FK) -->
+        <mxCell id="fk-ap-partida" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-30"
+          target="_KglgopSU6I9OmG3ns4V-39"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Evento de Jogo -> Partida (IdPartida FK) -->
+        <mxCell id="fk-ev-partida" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-29"
+          target="_KglgopSU6I9OmG3ns4V-39"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Evento de Jogo -> Jogador (IdJogador FK) -->
+        <mxCell id="fk-ev-jogador" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-29"
+          target="_KglgopSU6I9OmG3ns4V-18"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Edição -> Seleção (Campeã*, Vice*, Terceiro* — referência circular) -->
+        <mxCell id="fk-edicao-selecao" parent="1" edge="1"
+          source="_KglgopSU6I9OmG3ns4V-1"
+          target="_KglgopSU6I9OmG3ns4V-14"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="30" y="65" />
+              <mxPoint x="30" y="460" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
       </root>
     </mxGraphModel>
   </diagram>
