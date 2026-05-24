@@ -1,12 +1,11 @@
-# 🏆 SCC0640 – Sistema de Copas do Mundo FIFA
+# 🏆 Sistema de Copas do Mundo FIFA
 
-> **Projeto de Curso** | SCC0640 Bases de Dados  
-> USP / ICMC – Prof. Jose Fernando Rodrigues Junior  
-> Entrega: 24/05 · Apresentação: 25, 26/05 e 01/06
+> **SCC0640 Bases de Dados** | USP / ICMC  
+> Prof. Jose Fernando Rodrigues Junior
 
 ---
 
-## 👥 Membros do Grupo
+## 👥 Grupo
 
 <!-- MEMBROS_START -->
 | Nome | Nº USP | Responsabilidade na apresentação |
@@ -19,54 +18,33 @@
 
 ---
 
-## 🗂️ Estrutura do Repositório
+## 📋 Descrição
 
-```
-bd-copa-do-mundo/
-├── diagramas/
-│   ├── DER.drawio            ← Diagrama ER (edite aqui no draw.io)
-│   ├── MER.drawio            ← Modelo Relacional
-│   └── exports/              ← PNGs para o README (atualize manualmente)
-├── sql/
-│   ├── 05.DDL.sql            ← Criação das tabelas + triggers
-│   └── 06.DML.sql            ← Dados de teste
-├── prototipo/                ← Código Python do protótipo (queries.py = 10 consultas)
-├── scripts/
-│   └── update_members.py     ← Sincroniza nomes do .txt → README
-├── .github/workflows/
-│   └── export-diagrams.yml   ← CI: atualiza membros no README
-└── 08.Instrucoes.txt         ← ⚠️ Preencher nomes/NUSPs antes da entrega
-```
-
-> **Como atualizar os PNGs do README:**  
-> 1. Abra `DER.drawio` ou `MER.drawio` no [draw.io](https://app.diagrams.net)  
-> 2. Edite, salve, exporte como PNG (Border Width: 5, fundo branco)  
-> 3. Salve como `diagramas/exports/DER.png` ou `MER.png`  
-> 4. Faça commit + push
+Sistema de banco de dados para gerenciamento completo de edições da Copa do Mundo FIFA. Armazena e consulta informações sobre seleções, países, confederações, jogadores, técnicos, árbitros, estádios, cidades-sede, partidas, fases, grupos, convocações e eventos de jogo.
 
 ---
 
 ## 📐 Diagramas
 
-### DER — Diagrama Entidade-Relacionamento
+### Diagrama Entidade-Relacionamento (DER)
 
 ![DER](diagramas/exports/DER.png)
 
-_Caso a imagem não carregue, [abra o diagrama no viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FGUUDIN%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2FDER.drawio)_
+_[Abrir no draw.io viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FGUUDIN%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2FDER.drawio)_
 
 ---
 
-### Modelo Relacional
+### Modelo Relacional (Crow's Foot)
 
 ![Modelo Relacional](diagramas/exports/MER.png)
 
-_Caso a imagem não carregue, [abra no viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FGUUDIN%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2FMER.drawio)_
+_[Abrir no draw.io viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FGUUDIN%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2FMER.drawio)_
 
 ---
 
-## 🗄️ Esquema do Banco (Mermaid ERD)
+## 🗄️ Esquema do Banco
 
-> Gerado a partir do DDL — sempre em sincronia com o código.
+O banco possui **17 tabelas** modeladas em PostgreSQL:
 
 ```mermaid
 erDiagram
@@ -84,9 +62,9 @@ erDiagram
         varchar3    pais_sede
         date        data_inicio
         date        data_fim
-        integer     campea           FK  "nullable"
-        integer     vice_campeao     FK  "nullable"
-        integer     terceiro_colocado FK "nullable"
+        integer     campea           FK
+        integer     vice_campeao     FK
+        integer     terceiro_colocado FK
     }
     CIDADE_SEDE {
         varchar     cidade           PK
@@ -149,17 +127,16 @@ erDiagram
         timestamp   data_hora
         integer     selecao1         FK
         integer     selecao2         FK
-        integer     gols_reg_sel1    "nullable"
-        integer     gols_reg_sel2    "nullable"
-        integer     gols_prorr_sel1  "nullable"
-        integer     gols_prorr_sel2  "nullable"
-        integer     gols_pen_sel1    "nullable"
-        integer     gols_pen_sel2    "nullable"
-        integer     id_vencedor      FK "nullable"
+        integer     gols_reg_sel1
+        integer     gols_reg_sel2
+        integer     gols_prorr_sel1
+        integer     gols_prorr_sel2
+        integer     gols_pen_sel1
+        integer     gols_pen_sel2
+        integer     id_vencedor      FK
     }
     ARBITRO {
         serial      id_arbitro       PK
-        varchar     nome_arbitro
     }
     ARBITRAGEM_PARTIDA {
         integer     id_partida       PK
@@ -168,8 +145,8 @@ erDiagram
     }
     EVENTO_DE_JOGO {
         serial      id_evento        PK
-        integer     id_partida       PK
-        integer     id_jogador       FK "nullable"
+        integer     id_partida       FK
+        integer     id_jogador       FK
         varchar50   tipo_evento
         time        tempo
     }
@@ -178,7 +155,7 @@ erDiagram
     PAIS               ||--o{ SELECAO              : "representa"
     EDICAO_DA_COPA     ||--o{ FASE                 : "tem"
     EDICAO_DA_COPA     ||--o{ GRUPO                : "possui"
-    EDICAO_DA_COPA     }o--o{ CIDADE_SEDE          : "sediada em (via CSE)"
+    EDICAO_DA_COPA     }o--o{ CIDADE_SEDE          : "via CSE"
     CIDADE_SEDE        ||--o{ CIDADE_SEDIA_EDICAO  : "é sede"
     EDICAO_DA_COPA     ||--o{ CIDADE_SEDIA_EDICAO  : "sediada em"
     CIDADE_SEDE        ||--o{ ESTADIO              : "possui"
@@ -190,7 +167,7 @@ erDiagram
     JOGADOR            ||--o{ CONVOCACAO           : "é convocado"
     FASE               ||--o{ PARTIDA              : "contém"
     ESTADIO            ||--o{ PARTIDA              : "sedia"
-    SELECAO            ||--o{ PARTIDA              : "disputa (sel1/sel2/vencedor)"
+    SELECAO            ||--o{ PARTIDA              : "disputa"
     PARTIDA            ||--o{ ARBITRAGEM_PARTIDA   : "tem árbitros"
     ARBITRO            ||--o{ ARBITRAGEM_PARTIDA   : "arbitra"
     PARTIDA            ||--o{ EVENTO_DE_JOGO       : "tem eventos"
@@ -200,76 +177,98 @@ erDiagram
 
 ---
 
-## ⚙️ Triggers implementadas
+## ⚙️ Regras de Negócio (Triggers)
 
-| # | Trigger | Tabela | Evento | Regra de negócio |
-|---|---------|--------|--------|-----------------|
-| 1 | `trg_limite_convocacao` | `convocacao` | `BEFORE INSERT` | Máximo 26 jogadores por seleção por edição |
-| 2 | `trg_estadio_edicao` | `partida` | `BEFORE INSERT/UPDATE` | Estádio deve pertencer a cidade-sede da edição |
-| 3 | `trg_jogador_partida` | `evento_de_jogo` | `BEFORE INSERT/UPDATE` | Jogador deve estar convocado para uma das seleções da partida |
-| 4 | `trg_gols_jogador` | `evento_de_jogo` | `AFTER INSERT/UPDATE/DELETE` | Mantém `gols_marcados` em `convocacao` sincronizado |
+| # | Trigger | Regra |
+|---|---------|-------|
+| 1 | `trg_limite_convocacao` | Máximo de 26 jogadores convocados por seleção por edição |
+| 2 | `trg_estadio_edicao` | O estádio da partida deve pertencer a uma cidade-sede daquela edição |
+| 3 | `trg_jogador_partida` | O jogador de um evento deve estar convocado em uma das seleções da partida |
+| 4 | `trg_gols_jogador` | Mantém `gols_marcados` em `convocacao` sincronizado automaticamente com os eventos |
 
 ---
 
-## 📋 Consultas suportadas
+## 📋 Consultas Suportadas
 
 | # | Consulta |
 |---|----------|
-| 1 | Todas as edições com ano, país-sede e campeão |
+| 1 | Todas as edições: ano, país-sede e campeão |
 | 2 | Seleções participantes de uma edição |
 | 3 | Grupos de uma edição e suas seleções |
-| 4 | Classificação de um grupo |
+| 4 | Tabela de classificação de um grupo (pontos, saldo, gols) |
 | 5 | Partidas de uma edição (fase, data, estádio, placar) |
-| 6 | Caminho do mata-mata (classificados por fase) |
+| 6 | Caminho do mata-mata — classificados por fase |
 | 7 | Elenco convocado de uma seleção numa edição |
 | 8 | Eventos de uma partida (gols, cartões, substituições) |
-| 9 | Artilheiros de uma edição |
-| 10 | Histórico de uma seleção (participações, posições, J/V/E/D) |
-
-Implementadas em [`prototipo/queries.py`](prototipo/queries.py) (funções `q1_…` a `q10_…`).
+| 9 | Artilheiros de uma edição (top 10) |
+| 10 | Histórico de uma seleção (participações, títulos, J/V/E/D) |
 
 ---
 
-## 🚀 Como executar o protótipo
+## 🚀 Como Executar
+
+### Pré-requisitos
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- Python 3.10+
+
+### 1. Subir o PostgreSQL
 
 ```bash
-# 1. Instalar dependências
+docker run -d \
+  --name postgres-copa \
+  -e POSTGRES_PASSWORD=copa123 \
+  -e POSTGRES_DB=copa_mundo \
+  -p 5432:5432 \
+  postgres:16
+```
+
+### 2. Carregar o banco
+
+```bash
+docker cp sql/05.DDL.sql postgres-copa:/tmp/DDL.sql
+docker cp sql/06.DML.sql postgres-copa:/tmp/DML.sql
+docker exec -it postgres-copa psql -U postgres -d copa_mundo -f /tmp/DDL.sql
+docker exec -it postgres-copa psql -U postgres -d copa_mundo -f /tmp/DML.sql
+```
+
+### 3. Subir o Ollama (IA local)
+
+```bash
+docker run -d \
+  -v ollama:/root/.ollama \
+  -p 11434:11434 \
+  --name ollama \
+  ollama/ollama
+
+docker exec -it ollama ollama pull qwen3.5:2b
+```
+
+### 4. Instalar dependências e rodar o protótipo
+
+```bash
 cd prototipo
 pip install -r requirements.txt
-
-# 2. Executar
 python main.py
-
-# 3. Na tela de login informe:
-#    Host, Porta, Banco, Usuário, Senha do PostgreSQL
-#    (o ollama deve estar rodando localmente na porta 11434)
 ```
 
-Ver instruções completas em [`prototipo/README.md`](prototipo/README.md).
+### 5. Credenciais de conexão
+
+```
+Host: localhost   Porta: 5432   Banco: copa_mundo
+Usuário: postgres   Senha: copa123
+```
 
 ---
 
-## 📦 Arquivos para entrega
+## 📦 Arquivos de Entrega
 
-| Arquivo entregável | Fonte no repositório | Status |
-|--------------------|----------------------|--------|
-| `01.ER.pdf`        | exportar `diagramas/DER.drawio` como PDF | ✅ |
-| `02.ER.xml`        | renomear `diagramas/DER.drawio` → `02.ER.xml` | ✅ |
-| `03.Relacional.pdf`| exportar `diagramas/MER.drawio` como PDF | ✅ |
-| `04.Relacional.xml`| renomear `diagramas/MER.drawio` → `04.Relacional.xml` | ✅ |
-| `05.DDL.sql`       | `sql/05.DDL.sql` | ✅ |
-| `06.DML.sql`       | `sql/06.DML.sql` | 🔄 preencher |
-| `07.Prototipo.zip` | zipar pasta `prototipo/` | 🔄 em andamento |
-| `08.Instrucoes.txt`| `08.Instrucoes.txt` — preencher NUSPs faltantes | 🔄 preencher |
-
----
-
-## 🔧 Setup rápido do banco local
-
-```sql
--- No psql:
-CREATE DATABASE copa_do_mundo;
-\c copa_do_mundo
-\i sql/05.DDL.sql
-\i sql/06.DML.sql
-```
+| Arquivo | Origem |
+|---------|--------|
+| `01.ER.pdf` | Exportar `diagramas/DER.drawio` como PDF no draw.io |
+| `02.ER.xml` | Renomear `diagramas/DER.drawio` |
+| `03.Relacional.pdf` | Exportar `diagramas/MER.drawio` como PDF no draw.io |
+| `04.Relacional.xml` | Renomear `diagramas/MER.drawio` |
+| `05.DDL.sql` | `sql/05.DDL.sql` |
+| `06.DML.sql` | `sql/06.DML.sql` |
+| `07.Prototipo.zip` | Pasta `prototipo/` zipada |
+| `08.Instrucoes.txt` | Raiz do repositório |

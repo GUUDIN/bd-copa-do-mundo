@@ -5,3 +5,8 @@ diagramas/fix_encoding.py
 *.pyc
 __pycache__/
 .env
+# Entrega, apresentação e scripts locais
+entrega/
+entrega_copa_do_mundo.zip
+APRESENTACAO.md
+prototipo/run.sh
