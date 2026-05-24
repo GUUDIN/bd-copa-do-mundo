@@ -2,9 +2,9 @@ SCC0640 – Bases de Dados – Projeto Copa do Mundo FIFA
 
 MEMBROS DO GRUPO:
 - [Nome 1] – NUSP
-- [Nome 2] – NUSP
-- [Nome 3] – NUSP
-- [Nome 4] – NUSP
+- [André Santos Messias] – NUSP
+- [Mateus Santos Messias] – 12548000
+- [Pedro Borges Gudin] – 12547997
 
 COMO EXECUTAR O PROTÓTIPO:
 1. Instalar Python 3.10+ e PostgreSQL
