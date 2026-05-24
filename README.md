@@ -11,8 +11,8 @@
 <!-- MEMBROS_START -->
 | Nome | Nº USP | Responsabilidade na apresentação |
 |------|--------|----------------------------------|
-| Nome 1 | — | DER + Modelo Relacional |
-| André Santos Messias | — | DDL + DML + Triggers |
+| João Marcelo Moreira Trovão Filho | 13676332 | DER + Modelo Relacional |
+| André Luiz Santos Messias | 15493857 | DDL + DML + Triggers |
 | Mateus Santos Messias | 12548000 | Implementação do Protótipo |
 | Pedro Borges Gudin | 12547997 | Execução + Demonstração |
 <!-- MEMBROS_END -->
@@ -29,11 +29,10 @@ bd-copa-do-mundo/
 │   └── exports/              ← PNGs para o README (atualize manualmente)
 ├── sql/
 │   ├── 05.DDL.sql            ← Criação das tabelas + triggers
-│   ├── 06.DML.sql            ← Dados de teste
-│   └── consultas.sql         ← As 10 consultas requeridas
+│   └── 06.DML.sql            ← Dados de teste
+├── prototipo/                ← Código Python do protótipo (queries.py = 10 consultas)
 ├── scripts/
 │   └── update_members.py     ← Sincroniza nomes do .txt → README
-├── prototipo/                ← Código Python do protótipo
 ├── .github/workflows/
 │   └── export-diagrams.yml   ← CI: atualiza membros no README
 └── 08.Instrucoes.txt         ← ⚠️ Preencher nomes/NUSPs antes da entrega
@@ -227,7 +226,7 @@ erDiagram
 | 9 | Artilheiros de uma edição |
 | 10 | Histórico de uma seleção (participações, posições, J/V/E/D) |
 
-Ver implementação completa em [`sql/consultas.sql`](sql/consultas.sql).
+Implementadas em [`prototipo/queries.py`](prototipo/queries.py) (funções `q1_…` a `q10_…`).
 
 ---
 
@@ -235,10 +234,10 @@ Ver implementação completa em [`sql/consultas.sql`](sql/consultas.sql).
 
 ```bash
 # 1. Instalar dependências
-pip install psycopg2-binary requests
+cd prototipo
+pip install -r requirements.txt
 
 # 2. Executar
-cd prototipo
 python main.py
 
 # 3. Na tela de login informe:
