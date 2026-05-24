@@ -1,4 +1,4 @@
-name: 📐 CI — Diagramas + Membros
+name: 📐 Atualizar membros no README
 
 on:
   push:
@@ -6,29 +6,10 @@ on:
       - "08.Instrucoes.txt"
   workflow_dispatch:
 
-jobs:
-  export-diagrams:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    if: github.event_name == 'workflow_dispatch'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: rlespinasse/drawio-export-action@v2
-        with:
-          path: diagramas
-          format: png
-          output: exports
-          remove-page-suffix: true
-          transparent: false
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "ci: auto-export drawio → PNG fundo branco [skip ci]"
-          file_pattern: "diagramas/exports/*.png"
-          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+jobs:
   update-members:
     runs-on: ubuntu-latest
     permissions:
