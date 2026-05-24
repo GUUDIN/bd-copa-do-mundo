@@ -1,0 +1,150 @@
+<mxfile host="app.diagrams.net" pages="1">
+  <diagram id="9Wm3T1BpQpifCtyoHpQY" name="MER">
+    <mxGraphModel dx="2690" dy="1576" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-2" edge="1" parent="1" source="o-tbZihiBbmd0i6yPV1f-3" style="edgeStyle=orthogonalEdgeStyle;shape=link;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="o-tbZihiBbmd0i6yPV1f-32">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Seleção" vertex="1">
+          <mxGeometry height="50" width="120" x="1910" y="1295" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-4" edge="1" parent="1" source="o-tbZihiBbmd0i6yPV1f-5" style="edgeStyle=orthogonalEdgeStyle;shape=link;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="o-tbZihiBbmd0i6yPV1f-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="País" vertex="1">
+          <mxGeometry height="60" width="120" x="2340" y="1290" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Confederação" vertex="1">
+          <mxGeometry height="60" width="120" x="2780" y="1290" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Jogador" vertex="1">
+          <mxGeometry height="60" width="120" x="1630" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Técnico" vertex="1">
+          <mxGeometry height="60" width="120" x="2210" y="1592.5" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Árbitro" vertex="1">
+          <mxGeometry height="60" width="120" x="1295" y="1580" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;rotation=0;" value="Estádio" vertex="1">
+          <mxGeometry height="60" width="120" x="790" y="1290" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-14" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Cidade-Sede" vertex="1">
+          <mxGeometry height="60" width="120" x="790" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Partida" vertex="1">
+          <mxGeometry height="60" width="120" x="1325" y="1290" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-21" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Fase" vertex="1">
+          <mxGeometry height="60" width="120" x="1110" y="1065" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-25" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Edição da Copa" vertex="1">
+          <mxGeometry height="60" width="120" x="1115" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-26" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Grupo" vertex="1">
+          <mxGeometry height="60" width="120" x="1940" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-28" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Evento de Jogo" vertex="1">
+          <mxGeometry height="60" width="120" x="1325" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-30" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Pertence" vertex="1">
+          <mxGeometry height="80" width="80" x="2590" y="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-32" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Associa" vertex="1">
+          <mxGeometry height="80" width="80" x="2140" y="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-38" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Sedia" vertex="1">
+          <mxGeometry height="80" width="80" x="985" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-39" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Pertence" vertex="1">
+          <mxGeometry height="80" width="80" x="810" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-40" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Tem" vertex="1">
+          <mxGeometry height="80" width="80" x="1130" y="920" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-42" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Possui" vertex="1">
+          <mxGeometry height="80" width="80" x="1520" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-45" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Contendo" vertex="1">
+          <mxGeometry height="80" width="80" x="1960" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-46" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Treina" vertex="1">
+          <mxGeometry height="80" width="80" x="2230" y="1460" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-50" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Convoca" vertex="1">
+          <mxGeometry height="80" width="80" x="1800" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-52" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Disputa" vertex="1">
+          <mxGeometry height="80" width="80" x="1630" y="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-54" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Sedia" vertex="1">
+          <mxGeometry height="80" width="80" x="1065" y="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-56" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Pertence" vertex="1">
+          <mxGeometry height="80" width="80" x="1130" y="1170" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-58" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Apita" vertex="1">
+          <mxGeometry height="80" width="80" x="1315" y="1430" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-60" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Tem" vertex="1">
+          <mxGeometry height="80" width="80" x="1345" y="1160" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-113" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="Realiza" vertex="1">
+          <mxGeometry height="80" width="80" x="1500" y="1050" as="geometry" />
+        </mxCell>
+        <!-- Atributos chave -->
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-33" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;u&gt;Ano&lt;/u&gt;" vertex="1">
+          <mxGeometry height="40" width="60" x="1140" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-65" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;u&gt;Cidade&lt;/u&gt;" vertex="1">
+          <mxGeometry height="40" width="60" x="800" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-66" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;u&gt;Estado&lt;/u&gt;" vertex="1">
+          <mxGeometry height="40" width="60" x="800" y="715" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-67" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;u&gt;IdEstádio&lt;/u&gt;" vertex="1">
+          <mxGeometry height="40" width="60" x="800" y="1370" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-68" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;u&gt;LetraGrupo&lt;/u&gt;" vertex="1">
+          <mxGeometry height="40" width="70" x="1980" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-69" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;u&gt;IdConfederação&lt;/u&gt;" vertex="1">
+          <mxGeometry height="40" width="120" x="2780" y="1240" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-70" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;u&gt;SiglaPaís&lt;/u&gt;" vertex="1">
+          <mxGeometry height="40" width="100" x="2350" y="1225" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-71" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;u&gt;IdSeleção&lt;/u&gt;" vertex="1">
+          <mxGeometry height="40" width="80" x="1900" y="1350" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-99" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;u&gt;IdÁrbitro&lt;/u&gt;" vertex="1">
+          <mxGeometry height="40" width="60" x="1355" y="1650" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-102" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;u&gt;IdTécnico&lt;/u&gt;" vertex="1">
+          <mxGeometry height="40" width="70" x="2220" y="1660" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-110" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;u&gt;TipoFase&lt;/u&gt;" vertex="1">
+          <mxGeometry height="40" width="60" x="1105" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-140" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;u&gt;IdJogador&lt;/u&gt;" vertex="1">
+          <mxGeometry height="40" width="60" x="1630" y="1125" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-142" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;u&gt;IdPartida&lt;/u&gt;" vertex="1">
+          <mxGeometry height="40" width="60" x="1400" y="1360" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-146" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;u&gt;IdEvento&lt;/u&gt;" vertex="1">
+          <mxGeometry height="40" width="60" x="1322.5" y="1020" as="geometry" />
+        </mxCell>
+        <!-- Notas -->
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-131" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="* Opção de fazer dois relacionamentos distintos saindo de seleção para partida — garante cardinalidade via MER" vertex="1">
+          <mxGeometry height="40" width="420" x="350" y="1810" as="geometry" />
+        </mxCell>
+        <mxCell id="o-tbZihiBbmd0i6yPV1f-note2" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="** Tabela adicional para o relacionamento (N:M com atributo)" vertex="1">
+          <mxGeometry height="30" width="380" x="350" y="1860" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,29 @@
+SCC0640 – Bases de Dados – Projeto Copa do Mundo FIFA
+
+MEMBROS DO GRUPO:
+- [Nome 1] – NUSP
+- [Nome 2] – NUSP
+- [Nome 3] – NUSP
+- [Nome 4] – NUSP
+
+COMO EXECUTAR O PROTÓTIPO:
+1. Instalar Python 3.10+ e PostgreSQL
+2. Instalar ollama (https://ollama.com) e carregar um modelo:
+   ollama pull llama3
+3. Instalar dependências Python:
+   pip install psycopg2-binary requests
+4. Criar e popular o banco:
+   createdb copa_do_mundo
+   psql copa_do_mundo < sql/05.DDL.sql
+   psql copa_do_mundo < sql/06.DML.sql
+5. Executar o protótipo:
+   cd prototipo
+   python main.py
+6. Inserir os parâmetros de conexão quando solicitado
+
+O QUE NÃO FOI REALIZADO:
+- [preencher antes da entrega]
+
+OBSERVAÇÕES:
+- O diagrama Crow's Foot (04.Relacional.xml) está no arquivo 02.Relacional.drawio
+- Os arquivos PDF para entrega devem ser exportados do draw.io antes de zipar
