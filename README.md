@@ -8,12 +8,14 @@
 
 ## 👥 Membros do Grupo
 
+<!-- MEMBROS_START -->
 | Nome | Nº USP | Responsabilidade na apresentação |
 |------|--------|----------------------------------|
-| ...  | ...    | MER + Mapeamento Relacional      |
-| ...  | ...    | DDL + DML + Triggers             |
-| ...  | ...    | Implementação do Protótipo       |
-| ...  | ...    | Execução + Demonstração          |
+| João Marcelo Moreira Trovão Filho | 13676332 | DER + Modelo Relacional |
+| André Luiz Santos Messias | 15493857 | DDL + DML + Triggers |
+| Mateus Santos Messias | 12548000 | Implementação do Protótipo |
+| Pedro Borges Gudin | 12547997 | Execução + Demonstração |
+<!-- MEMBROS_END -->
 
 ---
 
@@ -22,44 +24,43 @@
 ```
 bd-copa-do-mundo/
 ├── diagramas/
-│   ├── 01.ER.drawio          ← MER (edite aqui no draw.io)
-│   ├── 02.Relacional.drawio  ← Modelo Relacional
-│   └── exports/              ← SVGs gerados automaticamente pelo CI
+│   ├── DER.drawio            ← Diagrama ER (edite aqui no draw.io)
+│   ├── MER.drawio            ← Modelo Relacional
+│   └── exports/              ← PNGs para o README (atualize manualmente)
 ├── sql/
 │   ├── 05.DDL.sql            ← Criação das tabelas + triggers
-│   ├── 06.DML.sql            ← Dados de teste
-│   └── consultas.sql         ← As 10 consultas requeridas
-├── prototipo/                ← Código Python do protótipo
+│   └── 06.DML.sql            ← Dados de teste
+├── prototipo/                ← Código Python do protótipo (queries.py = 10 consultas)
+├── scripts/
+│   └── update_members.py     ← Sincroniza nomes do .txt → README
 ├── .github/workflows/
-│   └── export-diagrams.yml   ← CI: drawio → SVG automático
-└── 08.Instrucoes.txt
+│   └── export-diagrams.yml   ← CI: atualiza membros no README
+└── 08.Instrucoes.txt         ← ⚠️ Preencher nomes/NUSPs antes da entrega
 ```
 
-> **Como atualizar os diagramas:**  
-> 1. Abra `diagramas/01.ER.drawio` ou `02.Relacional.drawio` no [draw.io](https://app.diagrams.net)  
-> 2. Edite e salve  
-> 3. Faça commit + push  
-> 4. O GitHub Action exporta automaticamente os SVGs — o README é atualizado 🎉
+> **Como atualizar os PNGs do README:**  
+> 1. Abra `DER.drawio` ou `MER.drawio` no [draw.io](https://app.diagrams.net)  
+> 2. Edite, salve, exporte como PNG (Border Width: 5, fundo branco)  
+> 3. Salve como `diagramas/exports/DER.png` ou `MER.png`  
+> 4. Faça commit + push
 
 ---
 
 ## 📐 Diagramas
 
-### MER (Entidade-Relacionamento)
+### DER — Diagrama Entidade-Relacionamento
 
-> 🔄 Atualizado automaticamente via CI quando o `.drawio` é modificado
+![DER](diagramas/exports/DER.png)
 
-![MER](diagramas/exports/01.ER.svg)
-
-_Caso o SVG não carregue, [abra o diagrama no viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FSEU_USUARIO%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2F01.ER.drawio)_
+_Caso a imagem não carregue, [abra o diagrama no viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FGUUDIN%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2FDER.drawio)_
 
 ---
 
 ### Modelo Relacional
 
-![Relacional](diagramas/exports/02.Relacional.svg)
+![Modelo Relacional](diagramas/exports/MER.png)
 
-_Caso o SVG não carregue, [abra no viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FSEU_USUARIO%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2F02.Relacional.drawio)_
+_Caso a imagem não carregue, [abra no viewer →](https://viewer.diagrams.net/?tags=%7B%7D&target=blank&highlight=0000ff&edit=https%3A%2F%2Fapp.diagrams.net%2F&layers=1&nav=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2FGUUDIN%2Fbd-copa-do-mundo%2Fmain%2Fdiagramas%2FMER.drawio)_
 
 ---
 
@@ -225,7 +226,7 @@ erDiagram
 | 9 | Artilheiros de uma edição |
 | 10 | Histórico de uma seleção (participações, posições, J/V/E/D) |
 
-Ver implementação completa em [`sql/consultas.sql`](sql/consultas.sql).
+Implementadas em [`prototipo/queries.py`](prototipo/queries.py) (funções `q1_…` a `q10_…`).
 
 ---
 
@@ -233,10 +234,10 @@ Ver implementação completa em [`sql/consultas.sql`](sql/consultas.sql).
 
 ```bash
 # 1. Instalar dependências
-pip install psycopg2-binary requests
+cd prototipo
+pip install -r requirements.txt
 
 # 2. Executar
-cd prototipo
 python main.py
 
 # 3. Na tela de login informe:
@@ -250,16 +251,16 @@ Ver instruções completas em [`prototipo/README.md`](prototipo/README.md).
 
 ## 📦 Arquivos para entrega
 
-| Arquivo | Fonte no repositório | Status |
-|---------|----------------------|--------|
-| `01.ER.pdf` | exportar de `diagramas/01.ER.drawio` | ✅ |
-| `02.ER.xml` | `diagramas/01.ER.drawio` | ✅ |
-| `03.Relacional.pdf` | exportar de `diagramas/02.Relacional.drawio` | ✅ |
-| `04.Relacional.xml` | `diagramas/02.Relacional.drawio` | ✅ |
-| `05.DDL.sql` | `sql/05.DDL.sql` | ✅ |
-| `06.DML.sql` | `sql/06.DML.sql` | 🔄 preencher |
-| `07.Prototipo.zip` | `prototipo/` | 🔄 em andamento |
-| `08.Instrucoes.txt` | `08.Instrucoes.txt` | 🔄 preencher |
+| Arquivo entregável | Fonte no repositório | Status |
+|--------------------|----------------------|--------|
+| `01.ER.pdf`        | exportar `diagramas/DER.drawio` como PDF | ✅ |
+| `02.ER.xml`        | renomear `diagramas/DER.drawio` → `02.ER.xml` | ✅ |
+| `03.Relacional.pdf`| exportar `diagramas/MER.drawio` como PDF | ✅ |
+| `04.Relacional.xml`| renomear `diagramas/MER.drawio` → `04.Relacional.xml` | ✅ |
+| `05.DDL.sql`       | `sql/05.DDL.sql` | ✅ |
+| `06.DML.sql`       | `sql/06.DML.sql` | 🔄 preencher |
+| `07.Prototipo.zip` | zipar pasta `prototipo/` | 🔄 em andamento |
+| `08.Instrucoes.txt`| `08.Instrucoes.txt` — preencher NUSPs faltantes | 🔄 preencher |
 
 ---
 

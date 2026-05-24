@@ -1,34 +1,26 @@
-name: 📐 Export draw.io → SVG
+name: 📐 Atualizar membros no README
 
 on:
   push:
     paths:
-      - "diagramas/*.drawio"
+      - "08.Instrucoes.txt"
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
-  export:
+  update-members:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
-      - name: Checkout (histórico completo)
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Export draw.io → SVG
-        uses: rlespinasse/drawio-export-action@v2
+      - run: python3 scripts/update_members.py
+      - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          path: diagramas
-          format: svg
-          output: exports
-          remove-page-suffix: true
-
-      - name: Commit SVGs gerados
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "ci: auto-export drawio → SVG [skip ci]"
-          file_pattern: "diagramas/exports/*.svg"
+          commit_message: "ci: atualiza membros no README a partir do 08.Instrucoes.txt [skip ci]"
+          file_pattern: "README.md"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
