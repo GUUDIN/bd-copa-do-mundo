@@ -2,11 +2,22 @@ import sys
 import getpass
 
 import psycopg2
+import sqlparse
 
 from db import Database
 from display import exibir_resultado
 import queries
 import ollama_client
+
+
+def formatar_sql(sql):
+    """Reformata o SQL para leitura humana — quebras de linha por cláusula."""
+    return sqlparse.format(
+        sql,
+        reindent=True,
+        keyword_case="upper",
+        indent_width=2,
+    )
 
 
 def fazer_login():
@@ -189,9 +200,10 @@ def consulta_ia(db):
         print(f"\n[ERRO inesperado ao chamar Ollama] {e}")
         return
 
-    print("\n--- SQL gerado ---")
-    print(sql_gerado)
-    print("------------------")
+    print("\n┌── SQL gerado " + "─" * 45)
+    for linha in formatar_sql(sql_gerado).splitlines():
+        print(f"│ {linha}")
+    print("└" + "─" * 59)
 
     confirma = input("\nExecutar este SQL? [S/n]: ").strip().lower()
     if confirma == "n":
