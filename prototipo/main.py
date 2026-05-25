@@ -179,6 +179,9 @@ def consulta_ia(db):
     except ConnectionError as e:
         print(f"\n[ERRO Ollama] {e}")
         return
+    except ollama_client.RespostaNaoSei as e:
+        print(f"\n[IA] {e}")
+        return
     except ValueError as e:
         print(f"\n[ERRO] {e}")
         return

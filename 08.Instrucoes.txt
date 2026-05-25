@@ -23,7 +23,11 @@ COMO EXECUTAR O PROTÓTIPO:
 
 3) Subir o Ollama em container e baixar o modelo:
    docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
-   docker exec -it ollama ollama pull gemma3:1b
+   docker exec -it ollama ollama pull qwen2.5-coder:3b
+
+   (Se estiver em um Mac com Apple Silicon e quiser ~5x mais velocidade na IA,
+    instale o Ollama nativo no Mac em vez do container: https://ollama.com/download.
+    O modelo é o mesmo: ollama pull qwen2.5-coder:3b)
 
 4) Instalar dependências Python e rodar o protótipo:
    cd prototipo
@@ -39,5 +43,7 @@ O QUE NÃO FOI REALIZADO:
 
 OBSERVAÇÕES:
 - Diagramas E/R e Relacional estão na pasta diagramas/ (exportar PDF do draw.io antes de zipar).
-- O modo "[IA] Consulta em linguagem natural" usa o modelo gemma3:1b via Ollama;
+- O modo "[IA] Consulta em linguagem natural" usa o modelo qwen2.5-coder:3b via Ollama;
   o SQL gerado é mostrado e requer confirmação antes de executar.
+- Para perguntas fora do escopo do banco (ex.: "faça um poema"), a IA retorna
+  uma mensagem amigável dizendo que não pode responder.
