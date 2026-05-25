@@ -200,6 +200,42 @@ def consulta_ia(db):
         print(f"\n[ERRO inesperado ao chamar Ollama] {e}")
         return
 
+    max_tentativas_correcao = 3
+    for tentativa in range(max_tentativas_correcao + 1):
+        try:
+            db.validar_consulta_leitura(sql_gerado)
+            break
+        except psycopg2.Error as e:
+            erro_postgres = str(e)
+            if tentativa == max_tentativas_correcao:
+                print("\n[ERRO] A IA gerou SQL inválido. Consulta rejeitada antes da execução:")
+                print(f"   {erro_postgres}")
+                print("\n┌── SQL rejeitado " + "─" * 42)
+                for linha in formatar_sql(sql_gerado).splitlines():
+                    print(f"│ {linha}")
+                print("└" + "─" * 59)
+                return
+
+            print(
+                "\n[INFO] SQL rejeitado pelo PostgreSQL. "
+                f"Tentando correção automática ({tentativa + 1}/{max_tentativas_correcao})..."
+            )
+            try:
+                sql_gerado = ollama_client.corrigir_sql(
+                    pergunta,
+                    sql_gerado,
+                    erro_postgres,
+                )
+            except ConnectionError as e2:
+                print(f"\n[ERRO Ollama] Falha ao corrigir SQL: {e2}")
+                return
+            except ollama_client.RespostaNaoSei as e2:
+                print(f"\n[IA] {e2}")
+                return
+            except ValueError as e2:
+                print(f"\n[ERRO] Correção automática retornou SQL inválido: {e2}")
+                return
+
     print("\n┌── SQL gerado " + "─" * 45)
     for linha in formatar_sql(sql_gerado).splitlines():
         print(f"│ {linha}")
@@ -211,7 +247,21 @@ def consulta_ia(db):
         return
 
     try:
-        colunas, linhas = db.executar(sql_gerado)
+        colunas, linhas = db.executar_leitura(sql_gerado)
+        if colunas and not linhas:
+            print("\n[INFO] Consulta retornou zero linhas. Tentando revisão automática...")
+            try:
+                sql_revisado = ollama_client.revisar_sql_sem_resultados(pergunta, sql_gerado)
+                db.validar_consulta_leitura(sql_revisado)
+                colunas_revisadas, linhas_revisadas = db.executar_leitura(sql_revisado)
+                if linhas_revisadas:
+                    print("\n┌── SQL revisado " + "─" * 43)
+                    for linha in formatar_sql(sql_revisado).splitlines():
+                        print(f"│ {linha}")
+                    print("└" + "─" * 59)
+                    colunas, linhas = colunas_revisadas, linhas_revisadas
+            except (ConnectionError, ValueError, ollama_client.RespostaNaoSei, psycopg2.Error) as e:
+                print(f"\n[INFO] Revisão automática não encontrou alternativa válida: {e}")
         exibir_resultado(colunas, linhas)
     except psycopg2.Error as e:
         print(f"\n[ERRO SQL] O SQL gerado é inválido ou inseguro:")

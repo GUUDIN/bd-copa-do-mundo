@@ -22,6 +22,10 @@
 
 Sistema de banco de dados para gerenciamento completo de edições da Copa do Mundo FIFA. Armazena e consulta informações sobre seleções, países, confederações, jogadores, técnicos, árbitros, estádios, cidades-sede, partidas, fases, grupos, convocações e eventos de jogo.
 
+A carga de dados cobre as Copas de **1998, 2002, 2006, 2010, 2014, 2018 e 2022**,
+período com 32 seleções por edição e máximo de 7 jogos por seleção. A Copa de
+2026 foi excluída por ter outro formato.
+
 ---
 
 ## 📐 Diagramas
@@ -240,7 +244,7 @@ docker run -d \
   --name ollama \
   ollama/ollama
 
-docker exec -it ollama ollama pull qwen3.5:2b
+docker exec -it ollama ollama pull qwen2.5-coder:3b
 ```
 
 ### 4. Instalar dependências e rodar o protótipo

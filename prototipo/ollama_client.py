@@ -5,6 +5,9 @@ Host e modelo podem ser sobrescritos por OLLAMA_HOST e OLLAMA_MODEL.
 import os
 import re
 import requests
+import sqlparse
+import unicodedata
+from pathlib import Path
 
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434").rstrip("/")
 OLLAMA_URL = f"{OLLAMA_HOST}/api/chat"
@@ -13,6 +16,17 @@ MODELO_PADRAO = os.environ.get("OLLAMA_MODEL", "qwen2.5-coder:3b")
 # Sentinela que o modelo retorna quando a pergunta não pode ser respondida
 # usando o schema (ou quando não é sobre dados do banco).
 SENTINELA_NAO_SEI = "-- NAO_SEI"
+
+
+def _carregar_treinamento():
+    caminho = Path(__file__).with_name("IA_TREINAMENTO.md")
+    try:
+        return caminho.read_text(encoding="utf-8").strip()
+    except OSError:
+        return ""
+
+
+TREINAMENTO_IA = _carregar_treinamento()
 
 
 ESQUEMA_SQL = """
@@ -170,13 +184,25 @@ REGRAS OBRIGATÓRIAS:
 - Não assuma ano, seleção, fase ou edição se o usuário não especificar.
 - Gere apenas SELECT (ou WITH ... SELECT). Nunca gere INSERT, UPDATE, DELETE, DROP, ALTER, CREATE, TRUNCATE.
 - Para contar partidas de uma seleção, considere que a seleção pode aparecer tanto em `partida.selecao1` quanto em `partida.selecao2` — some os dois lados.
+- Para gols de/contra uma seleção em partidas, considere os dois lados:
+  quando a seleção está em `selecao1`, seus gols são `gols_regulamentares_selecao1 + gols_prorrogacao_selecao1` e o adversário é `selecao2`;
+  quando está em `selecao2`, seus gols são `gols_regulamentares_selecao2 + gols_prorrogacao_selecao2` e o adversário é `selecao1`.
+- Não use gols de pênaltis (`gols_penaltis_*`) como gols de jogo, a menos que a pergunta peça disputa de pênaltis.
 - Para perguntas de ranking, máximo ou "mais X", use agregação com GROUP BY, ORDER BY ... DESC e LIMIT quando apropriado.
 - Para perguntas ambíguas, prefira uma consulta geral (sem filtro de ano/seleção inventado) a inventar valores.
 - Para comparações de texto digitadas pelo usuário, use ILIKE ou UPPER(...) = UPPER(...).
+- Sempre qualifique colunas com alias de tabela (ex.: `s.ano`, `pt.id_partida`).
+- Todo alias usado em SELECT, WHERE, GROUP BY ou ORDER BY precisa existir no FROM/JOIN.
+- Ao analisar partidas sob a perspectiva de uma seleção, use uma CTE/subconsulta com os dois lados (`selecao1` e `selecao2`) em vez de contar apenas um lado.
+- Se a pergunta disser "todas as copas", "todas as edições" ou não citar ano, NÃO filtre por ano.
+- Se a pergunta pedir "gols", use SUM de colunas de gols; nunca use COUNT(*) como quantidade de gols.
 
 CONVENÇÕES DO SCHEMA:
 - PK de `edicao_da_copa` é `ano` (INTEGER). Não existe coluna `id_edicao`.
 - País usa `sigla_pais` VARCHAR(3), ex.: 'BRA', 'ARG', 'FRA'.
+- Siglas úteis no banco: Alemanha=GER, Brasil=BRA, Argentina=ARG, França=FRA,
+  Espanha=ESP, Holanda=NED, Inglaterra=ENG, Itália=ITA, Portugal=POR,
+  Estados Unidos=USA, Japão=JPN, Coreia do Sul=KOR, México=MEX, Croácia=CRO.
 - `selecao` tem PK composta `(id_selecao, ano)`. Em todo JOIN com `selecao` case OS DOIS campos.
 - `partida` usa `selecao1`/`selecao2` (não mandante/visitante).
 - Gols ficam em três pares: `gols_regulamentares_*`, `gols_prorrogacao_*`, `gols_penaltis_*`.
@@ -187,6 +213,54 @@ CONVENÇÕES DO SCHEMA:
 
 SCHEMA:
 {ESQUEMA_SQL}
+
+TEMPLATES GENÉRICOS (adapte nomes, filtros e aliases; não copie placeholders):
+
+1) Perspectiva de uma seleção em partidas, trazendo adversário e gols pró:
+WITH jogos_selecao AS (
+    SELECT pt.ano, adv.sigla_pais AS sigla_adversario, adv_p.nome_pais AS adversario,
+           COALESCE(pt.gols_regulamentares_selecao1, 0) + COALESCE(pt.gols_prorrogacao_selecao1, 0) AS gols_pro,
+           COALESCE(pt.gols_regulamentares_selecao2, 0) + COALESCE(pt.gols_prorrogacao_selecao2, 0) AS gols_contra
+    FROM partida pt
+    JOIN selecao sel ON pt.selecao1 = sel.id_selecao AND pt.ano = sel.ano
+    JOIN selecao adv ON pt.selecao2 = adv.id_selecao AND pt.ano = adv.ano
+    JOIN pais adv_p ON adv.sigla_pais = adv_p.sigla_pais
+    WHERE sel.sigla_pais = '<SIGLA_DA_SELECAO>'
+    UNION ALL
+    SELECT pt.ano, adv.sigla_pais AS sigla_adversario, adv_p.nome_pais AS adversario,
+           COALESCE(pt.gols_regulamentares_selecao2, 0) + COALESCE(pt.gols_prorrogacao_selecao2, 0) AS gols_pro,
+           COALESCE(pt.gols_regulamentares_selecao1, 0) + COALESCE(pt.gols_prorrogacao_selecao1, 0) AS gols_contra
+    FROM partida pt
+    JOIN selecao sel ON pt.selecao2 = sel.id_selecao AND pt.ano = sel.ano
+    JOIN selecao adv ON pt.selecao1 = adv.id_selecao AND pt.ano = adv.ano
+    JOIN pais adv_p ON adv.sigla_pais = adv_p.sigla_pais
+    WHERE sel.sigla_pais = '<SIGLA_DA_SELECAO>'
+)
+SELECT sigla_adversario, adversario, SUM(gols_pro) AS gols_marcados
+FROM jogos_selecao
+GROUP BY sigla_adversario, adversario
+ORDER BY gols_marcados DESC, adversario
+LIMIT 1;
+
+2) Perspectiva de uma seleção para contar jogos:
+WITH jogos_selecao AS (
+    SELECT pt.ano, pt.id_partida
+    FROM partida pt
+    JOIN selecao sel ON pt.selecao1 = sel.id_selecao AND pt.ano = sel.ano
+    WHERE sel.sigla_pais = '<SIGLA_DA_SELECAO>'
+    UNION ALL
+    SELECT pt.ano, pt.id_partida
+    FROM partida pt
+    JOIN selecao sel ON pt.selecao2 = sel.id_selecao AND pt.ano = sel.ano
+    WHERE sel.sigla_pais = '<SIGLA_DA_SELECAO>'
+)
+SELECT ano, COUNT(id_partida) AS total_jogos
+FROM jogos_selecao
+GROUP BY ano
+ORDER BY ano;
+
+TREINAMENTO DE PADRÕES:
+__TREINAMENTO_DINAMICO__
 
 EXEMPLOS (a resposta é SEMPRE somente o SQL ou a sentinela, sem qualquer texto extra):
 
@@ -227,6 +301,119 @@ _COMECO_VALIDO = re.compile(r"^\s*(SELECT|WITH)\b", re.IGNORECASE)
 
 class RespostaNaoSei(Exception):
     """O modelo respondeu com a sentinela -- NAO_SEI."""
+
+
+def _normalizar_texto(texto):
+    texto = unicodedata.normalize("NFKD", texto)
+    texto = "".join(ch for ch in texto if not unicodedata.combining(ch))
+    texto = texto.lower()
+    return re.sub(r"[^a-z0-9]+", " ", texto).strip()
+
+
+def _tokens(texto):
+    ignorar = {
+        "a", "as", "o", "os", "um", "uma", "de", "da", "do", "das", "dos",
+        "em", "na", "no", "nas", "nos", "para", "por", "que", "qual",
+        "quais", "quanto", "quantos", "com", "todas", "todos", "copa",
+        "copas", "mundo", "selecao", "selecoes",
+    }
+    return {tok for tok in _normalizar_texto(texto).split() if len(tok) > 2 and tok not in ignorar}
+
+
+def _treinamento_relevante(pergunta, limite=10):
+    """Seleciona trechos relevantes do documento de treinamento.
+
+    O arquivo completo tem mais de 100 padrões, mas modelos locais pequenos ficam
+    lentos quando todo o material entra em toda chamada. Esta seleção é lexical:
+    não responde a pergunta nem escolhe SQL pronto, só reduz o contexto enviado.
+    """
+    if not TREINAMENTO_IA:
+        return ""
+
+    marcador_perguntas = "## Perguntas de treino por padrão"
+    marcador_armadilhas = "## Armadilhas comuns"
+
+    perguntas_texto = ""
+    armadilhas = ""
+
+    if marcador_perguntas in TREINAMENTO_IA:
+        _cabecalho, resto = TREINAMENTO_IA.split(marcador_perguntas, 1)
+        if marcador_armadilhas in resto:
+            perguntas_texto, armadilhas = resto.split(marcador_armadilhas, 1)
+        else:
+            perguntas_texto = resto
+
+    perguntas = [
+        linha.strip()
+        for linha in perguntas_texto.splitlines()
+        if re.match(r"^\d+\.", linha.strip())
+    ]
+
+    termos_pergunta = _tokens(pergunta)
+    ranqueadas = []
+    for indice, linha in enumerate(perguntas):
+        termos_linha = _tokens(linha)
+        score = len(termos_pergunta & termos_linha)
+        if score:
+            ranqueadas.append((score, -indice, linha))
+
+    selecionadas = [linha for _score, _neg_indice, linha in sorted(ranqueadas, reverse=True)[:limite]]
+
+    partes = []
+    if selecionadas:
+        partes.append("## Perguntas de treino relevantes\n" + "\n".join(selecionadas))
+    if armadilhas.strip():
+        armadilhas_relevantes = []
+        for linha in armadilhas.splitlines():
+            linha = linha.strip()
+            if linha.startswith("-") and (_tokens(linha) & termos_pergunta):
+                armadilhas_relevantes.append(linha)
+        if armadilhas_relevantes:
+            partes.append("## Armadilhas comuns relevantes\n" + "\n".join(armadilhas_relevantes[:6]))
+    return "\n\n".join(partes).strip()
+
+
+def _system_prompt(pergunta):
+    return SYSTEM_PROMPT.replace(
+        "__TREINAMENTO_DINAMICO__",
+        _treinamento_relevante(pergunta),
+    )
+
+
+def _chamar_ollama(mensagens, modelo=MODELO_PADRAO, timeout=300):
+    payload = {
+        "model": modelo,
+        "messages": mensagens,
+        "stream": False,
+        "options": {"temperature": 0.0},
+    }
+
+    try:
+        resposta = requests.post(OLLAMA_URL, json=payload, timeout=timeout)
+        resposta.raise_for_status()
+    except requests.exceptions.ConnectionError as e:
+        raise ConnectionError(
+            f"Não foi possível conectar ao Ollama em {OLLAMA_HOST}. "
+            "Verifique se o container está rodando (docker ps) e se a porta "
+            "11434 está publicada. Defina OLLAMA_HOST se necessário."
+        ) from e
+    except requests.exceptions.Timeout as e:
+        raise ConnectionError(
+            f"Tempo esgotado ({timeout}s) aguardando resposta do Ollama. "
+            "Tente uma pergunta mais simples ou aguarde — o primeiro pedido "
+            "após subir o container é mais lento (carregamento do modelo)."
+        ) from e
+    except requests.exceptions.HTTPError as e:
+        raise ConnectionError(
+            f"Ollama retornou erro HTTP {resposta.status_code}: {resposta.text[:200]}"
+        ) from e
+
+    try:
+        dados = resposta.json()
+    except ValueError as e:
+        raise ConnectionError("Resposta do Ollama não é um JSON válido.") from e
+
+    return dados.get("message", {}).get("content", "")
 
 
 def _limpar_resposta(texto):
@@ -272,6 +459,10 @@ def _validar_sql(texto):
             "Tente reformular a pergunta (ex.: 'Quantos jogos houve na copa de 2022?')."
         )
 
+    comandos = [cmd.strip() for cmd in sqlparse.split(texto) if cmd.strip()]
+    if len(comandos) != 1:
+        raise ValueError("Resposta contém múltiplos comandos SQL e foi rejeitada.")
+
     # Não pode conter comandos de escrita/DDL.
     if _COMANDOS_PROIBIDOS.search(texto):
         raise ValueError("Resposta contém comando proibido (INSERT/UPDATE/DELETE/DDL) e foi rejeitada.")
@@ -287,40 +478,61 @@ def gerar_sql(pergunta, modelo=MODELO_PADRAO, timeout=300):
       - RespostaNaoSei: modelo sinalizou que não sabe.
       - ValueError: saída inválida (markdown, comando proibido, vazio, etc.).
     """
-    payload = {
-        "model": modelo,
-        "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
+    conteudo = _chamar_ollama(
+        [
+            {"role": "system", "content": _system_prompt(pergunta)},
             {"role": "user", "content": pergunta},
         ],
-        "stream": False,
-        "options": {"temperature": 0.0},
-    }
+        modelo=modelo,
+        timeout=timeout,
+    )
+    return _validar_sql(_limpar_resposta(conteudo))
 
-    try:
-        resposta = requests.post(OLLAMA_URL, json=payload, timeout=timeout)
-        resposta.raise_for_status()
-    except requests.exceptions.ConnectionError as e:
-        raise ConnectionError(
-            f"Não foi possível conectar ao Ollama em {OLLAMA_HOST}. "
-            "Verifique se o container está rodando (docker ps) e se a porta "
-            "11434 está publicada. Defina OLLAMA_HOST se necessário."
-        ) from e
-    except requests.exceptions.Timeout as e:
-        raise ConnectionError(
-            f"Tempo esgotado ({timeout}s) aguardando resposta do Ollama. "
-            "Tente uma pergunta mais simples ou aguarde — o primeiro pedido "
-            "após subir o container é mais lento (carregamento do modelo)."
-        ) from e
-    except requests.exceptions.HTTPError as e:
-        raise ConnectionError(
-            f"Ollama retornou erro HTTP {resposta.status_code}: {resposta.text[:200]}"
-        ) from e
 
-    try:
-        dados = resposta.json()
-    except ValueError as e:
-        raise ConnectionError("Resposta do Ollama não é um JSON válido.") from e
+def corrigir_sql(pergunta, sql_invalido, erro_postgres, modelo=MODELO_PADRAO, timeout=300):
+    """Pede ao modelo para corrigir uma consulta rejeitada pelo PostgreSQL."""
+    pedido = f"""
+Pergunta original:
+{pergunta}
 
-    conteudo = dados.get("message", {}).get("content", "")
+SQL gerado que falhou:
+{sql_invalido}
+
+Erro retornado pelo PostgreSQL:
+{erro_postgres}
+
+Corrija a consulta. Responda somente com SQL PostgreSQL válido, sem explicações.
+""".strip()
+    conteudo = _chamar_ollama(
+        [
+            {"role": "system", "content": _system_prompt(pergunta)},
+            {"role": "user", "content": pedido},
+        ],
+        modelo=modelo,
+        timeout=timeout,
+    )
+    return _validar_sql(_limpar_resposta(conteudo))
+
+
+def revisar_sql_sem_resultados(pergunta, sql_sem_resultados, modelo=MODELO_PADRAO, timeout=300):
+    """Pede revisão quando o SQL compila, mas retorna zero linhas."""
+    pedido = f"""
+Pergunta original:
+{pergunta}
+
+SQL gerado compilou, mas retornou zero linhas:
+{sql_sem_resultados}
+
+Revise filtros de país/seleção, siglas e joins. Se houver nome de país em português,
+prefira comparar com `pais.nome_pais ILIKE` ou use a sigla correta do banco.
+Responda somente com SQL PostgreSQL válido, sem explicações.
+""".strip()
+    conteudo = _chamar_ollama(
+        [
+            {"role": "system", "content": _system_prompt(pergunta)},
+            {"role": "user", "content": pedido},
+        ],
+        modelo=modelo,
+        timeout=timeout,
+    )
     return _validar_sql(_limpar_resposta(conteudo))
