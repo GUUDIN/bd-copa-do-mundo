@@ -1,43 +1,45 @@
-SCC0640 – Bases de Dados – Projeto Copa do Mundo FIFA
+SCC0640 - Bases de Dados - Projeto Copa do Mundo FIFA
 
 MEMBROS DO GRUPO:
-- João Marcelo Moreira Trovão Filho – 13676332
-- André Luiz Santos Messias – 15493857
-- Mateus Santos Messias – 12548000
-- Pedro Borges Gudin – 12547997
+- João Marcelo Moreira Trovão Filho - 13676332
+- André Luiz Santos Messias        - 15493857
+- Mateus Santos Messias            - 12548000
+- Pedro Borges Gudin               - 12547997
 
 REQUISITOS:
-- Docker Desktop (para PostgreSQL e Ollama)
+- Docker Desktop (PostgreSQL e Ollama em containers)
 - Python 3.10+ com pip
 
-COMO EXECUTAR O PROTÓTIPO:
+COMO EXECUTAR (todos os comandos a partir da pasta da entrega, onde estão os 8 arquivos):
 
-1) Subir o PostgreSQL em container:
+1) Descompactar o protótipo:
+   - Extrair 07.Prototipo.zip; será criada a pasta "prototipo/".
+
+2) Subir o PostgreSQL e criar o banco:
    docker run -d --name postgres-copa -e POSTGRES_PASSWORD=copa123 -e POSTGRES_DB=copa_mundo -p 5432:5432 postgres:16
 
-2) Carregar DDL e DML no banco:
-   docker cp sql/05.DDL.sql postgres-copa:/tmp/DDL.sql
-   docker cp sql/06.DML.sql postgres-copa:/tmp/DML.sql
+3) Carregar DDL e DML:
+   docker cp 05.DDL.sql postgres-copa:/tmp/DDL.sql
+   docker cp 06.DML.sql postgres-copa:/tmp/DML.sql
    docker exec -it postgres-copa psql -U postgres -d copa_mundo -f /tmp/DDL.sql
    docker exec -it postgres-copa psql -U postgres -d copa_mundo -f /tmp/DML.sql
 
-3) Subir o Ollama em container e baixar o modelo:
+4) Subir o Ollama e baixar o modelo:
    docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
    docker exec -it ollama ollama pull gemma3:1b
 
-4) Instalar dependências Python e rodar o protótipo:
+5) Instalar dependências Python e rodar o protótipo:
    cd prototipo
    pip install -r requirements.txt
    python main.py
 
-5) No login do protótipo, usar:
+6) Dados de login no protótipo:
    Host: localhost   Porta: 5432   Banco: copa_mundo
    Usuário: postgres   Senha: copa123
 
-O QUE NÃO FOI REALIZADO:
-- [preencher antes da entrega]
-
-OBSERVAÇÕES:
-- Diagramas E/R e Relacional estão na pasta diagramas/ (exportar PDF do draw.io antes de zipar).
-- O modo "[IA] Consulta em linguagem natural" usa o modelo gemma3:1b via Ollama;
-  o SQL gerado é mostrado e requer confirmação antes de executar.
+OBSERVAÇÕES / O QUE NÃO FOI REALIZADO:
+- O modelo gemma3:1b (1B parâmetros) tem limitações para gerar SQL a partir de
+  linguagem natural; perguntas mais complexas podem retornar texto em vez de SQL.
+  O protótipo detecta isso, exibe a resposta crua do modelo e cancela a execução.
+- O SQL gerado pela IA sempre é exibido antes da execução, exigindo confirmação.
+- A opção "Digitar SQL diretamente" aceita múltiplos comandos separados por ";".
