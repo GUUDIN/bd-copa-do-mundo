@@ -166,127 +166,75 @@ CREATE TABLE evento_de_jogo (
 """.strip()
 
 
+# Anos que existem no DML. Fora desse conjunto, IA deve responder NAO_SEI.
+ANOS_DISPONIVEIS = (1998, 2002, 2006, 2010, 2014, 2018, 2022)
+
+
 SYSTEM_PROMPT = f"""
 Você é um gerador de SQL PostgreSQL para um banco de dados sobre Copas do Mundo da FIFA.
 
 REGRAS OBRIGATÓRIAS:
-- Responda APENAS com uma consulta SQL PostgreSQL válida.
-- Não explique.
-- Não use markdown.
-- Não coloque ```sql nem ```.
-- Não invente tabelas.
-- Não invente colunas.
-- Use exclusivamente as tabelas e colunas listadas no SCHEMA.
-- Se a pergunta não puder ser respondida usando o SCHEMA, responda exatamente:
-{SENTINELA_NAO_SEI}
-- Se a pergunta não for sobre dados da Copa do Mundo no banco (ex.: pedir um poema, conversar, fazer matemática genérica), responda exatamente:
-{SENTINELA_NAO_SEI}
-- Não assuma ano, seleção, fase ou edição se o usuário não especificar.
-- Gere apenas SELECT (ou WITH ... SELECT). Nunca gere INSERT, UPDATE, DELETE, DROP, ALTER, CREATE, TRUNCATE.
-- Para contar partidas de uma seleção, considere que a seleção pode aparecer tanto em `partida.selecao1` quanto em `partida.selecao2` — some os dois lados.
-- Para gols de/contra uma seleção em partidas, considere os dois lados:
-  quando a seleção está em `selecao1`, seus gols são `gols_regulamentares_selecao1 + gols_prorrogacao_selecao1` e o adversário é `selecao2`;
-  quando está em `selecao2`, seus gols são `gols_regulamentares_selecao2 + gols_prorrogacao_selecao2` e o adversário é `selecao1`.
-- Não use gols de pênaltis (`gols_penaltis_*`) como gols de jogo, a menos que a pergunta peça disputa de pênaltis.
-- Para perguntas de ranking, máximo ou "mais X", use agregação com GROUP BY, ORDER BY ... DESC e LIMIT quando apropriado.
-- Para perguntas ambíguas, prefira uma consulta geral (sem filtro de ano/seleção inventado) a inventar valores.
-- Para comparações de texto digitadas pelo usuário, use ILIKE ou UPPER(...) = UPPER(...).
-- Sempre qualifique colunas com alias de tabela (ex.: `s.ano`, `pt.id_partida`).
-- Todo alias usado em SELECT, WHERE, GROUP BY ou ORDER BY precisa existir no FROM/JOIN.
-- Ao analisar partidas sob a perspectiva de uma seleção, use uma CTE/subconsulta com os dois lados (`selecao1` e `selecao2`) em vez de contar apenas um lado.
-- Se a pergunta disser "todas as copas", "todas as edições" ou não citar ano, NÃO filtre por ano.
-- Se a pergunta pedir "gols", use SUM de colunas de gols; nunca use COUNT(*) como quantidade de gols.
+- Responda APENAS com uma consulta SQL PostgreSQL válida ou exatamente `{SENTINELA_NAO_SEI}`.
+- Não explique. Não use markdown. Não coloque ```sql nem ```.
+- Gere apenas SELECT (ou WITH ... SELECT). Nunca INSERT, UPDATE, DELETE, DROP, ALTER, CREATE, TRUNCATE.
+- Use exclusivamente tabelas e colunas listadas no SCHEMA.
+- Para textos digitados pelo usuário use ILIKE ou UPPER(...) = UPPER(...).
+- Sempre qualifique colunas com alias (`s.ano`, `pt.id_partida`).
+
+ESCOPO TEMPORAL:
+- A base tem exatamente 7 edições: 1998, 2002, 2006, 2010, 2014, 2018 e 2022.
+- Se a pergunta citar um ano fora desse conjunto (ex.: 1990, 1994, 2026, 1970,
+  2030), responda exatamente: {SENTINELA_NAO_SEI}
+- Se a pergunta disser "todas as copas", "todas as edições", "no geral" ou
+  não citar ano, NÃO filtre por ano — o resultado natural cobre só essas 7.
+
+REGRAS CRÍTICAS (estatísticas baseadas em partidas):
+1. "Perspectiva de UMA seleção" (pergunta cita uma seleção específica): normalize
+   `partida` com UNION ALL em duas linhas (uma com a seleção como `selecao1`,
+   outra como `selecao2`) e filtre por `sigla_pais` em AMBOS os lados.
+2. "Estatística sobre TODAS as seleções" (não cita seleção específica): mesma
+   normalização UNION ALL, SEM filtro de sigla. Agrupe por `ano + sigla_pais`.
+3. Gols MARCADOS da seleção do lado X = `gols_regulamentares_selecaoX + gols_prorrogacao_selecaoX`.
+4. Gols SOFRIDOS da seleção do lado X = mesma expressão do lado oposto Y.
+5. Nunca use `gols_penaltis_*` como gols de jogo (só para "disputa de pênaltis").
+6. "Em uma única edição" → GROUP BY ano + sigla_pais.
+7. "Máximo / maior / mais X" → calcule MAX em CTE auxiliar e retorne TODOS os
+   empatados via JOIN. NUNCA use LIMIT 1 nesses casos.
+8. Adversário só entra em GROUP BY se a pergunta falar "adversário", "contra
+   quem", "contra qual seleção". Nunca atribua gols de uma seleção ao adversário.
+9. Gols de JOGADORES → `convocacao.gols_marcados`.
+   Gols de SELEÇÕES / placares → tabela `partida`. Nunca confunda.
 
 CONVENÇÕES DO SCHEMA:
-- PK de `edicao_da_copa` é `ano` (INTEGER). Não existe coluna `id_edicao`.
-- País usa `sigla_pais` VARCHAR(3), ex.: 'BRA', 'ARG', 'FRA'.
-- Siglas úteis no banco: Alemanha=GER, Brasil=BRA, Argentina=ARG, França=FRA,
-  Espanha=ESP, Holanda=NED, Inglaterra=ENG, Itália=ITA, Portugal=POR,
-  Estados Unidos=USA, Japão=JPN, Coreia do Sul=KOR, México=MEX, Croácia=CRO.
+- PK de `edicao_da_copa` é `ano` (INTEGER).
 - `selecao` tem PK composta `(id_selecao, ano)`. Em todo JOIN com `selecao` case OS DOIS campos.
 - `partida` usa `selecao1`/`selecao2` (não mandante/visitante).
-- Gols ficam em três pares: `gols_regulamentares_*`, `gols_prorrogacao_*`, `gols_penaltis_*`.
 - `partida.id_vencedor` já guarda o vencedor de eliminatórias.
-- `convocacao.gols_marcados` é atualizado por trigger — use para artilheiros.
-- Fases válidas: 'Fase de Grupos', 'Oitavas de Final', 'Quartas de Final', 'Semifinais', 'Disputa de Terceiro Lugar', 'Final'.
-- Eventos válidos: 'Gol', 'Gol Contra', 'Pênalti Convertido', 'Cartão Amarelo', 'Cartão Vermelho', 'Substituição'.
+- Siglas: Alemanha=GER, Brasil=BRA, Argentina=ARG, França=FRA, Espanha=ESP,
+  Holanda=NED, Inglaterra=ENG, Itália=ITA, Portugal=POR, Estados Unidos=USA,
+  Japão=JPN, Coreia do Sul=KOR, México=MEX, Croácia=CRO.
+- Fases: 'Fase de Grupos', 'Oitavas de Final', 'Quartas de Final', 'Semifinais',
+  'Disputa de Terceiro Lugar', 'Final'.
 
 SCHEMA:
 {ESQUEMA_SQL}
 
-TEMPLATES GENÉRICOS (adapte nomes, filtros e aliases; não copie placeholders):
-
-1) Perspectiva de uma seleção em partidas, trazendo adversário e gols pró:
-WITH jogos_selecao AS (
-    SELECT pt.ano, adv.sigla_pais AS sigla_adversario, adv_p.nome_pais AS adversario,
-           COALESCE(pt.gols_regulamentares_selecao1, 0) + COALESCE(pt.gols_prorrogacao_selecao1, 0) AS gols_pro,
-           COALESCE(pt.gols_regulamentares_selecao2, 0) + COALESCE(pt.gols_prorrogacao_selecao2, 0) AS gols_contra
-    FROM partida pt
-    JOIN selecao sel ON pt.selecao1 = sel.id_selecao AND pt.ano = sel.ano
-    JOIN selecao adv ON pt.selecao2 = adv.id_selecao AND pt.ano = adv.ano
-    JOIN pais adv_p ON adv.sigla_pais = adv_p.sigla_pais
-    WHERE sel.sigla_pais = '<SIGLA_DA_SELECAO>'
-    UNION ALL
-    SELECT pt.ano, adv.sigla_pais AS sigla_adversario, adv_p.nome_pais AS adversario,
-           COALESCE(pt.gols_regulamentares_selecao2, 0) + COALESCE(pt.gols_prorrogacao_selecao2, 0) AS gols_pro,
-           COALESCE(pt.gols_regulamentares_selecao1, 0) + COALESCE(pt.gols_prorrogacao_selecao1, 0) AS gols_contra
-    FROM partida pt
-    JOIN selecao sel ON pt.selecao2 = sel.id_selecao AND pt.ano = sel.ano
-    JOIN selecao adv ON pt.selecao1 = adv.id_selecao AND pt.ano = adv.ano
-    JOIN pais adv_p ON adv.sigla_pais = adv_p.sigla_pais
-    WHERE sel.sigla_pais = '<SIGLA_DA_SELECAO>'
-)
-SELECT sigla_adversario, adversario, SUM(gols_pro) AS gols_marcados
-FROM jogos_selecao
-GROUP BY sigla_adversario, adversario
-ORDER BY gols_marcados DESC, adversario
-LIMIT 1;
-
-2) Perspectiva de uma seleção para contar jogos:
-WITH jogos_selecao AS (
-    SELECT pt.ano, pt.id_partida
-    FROM partida pt
-    JOIN selecao sel ON pt.selecao1 = sel.id_selecao AND pt.ano = sel.ano
-    WHERE sel.sigla_pais = '<SIGLA_DA_SELECAO>'
-    UNION ALL
-    SELECT pt.ano, pt.id_partida
-    FROM partida pt
-    JOIN selecao sel ON pt.selecao2 = sel.id_selecao AND pt.ano = sel.ano
-    WHERE sel.sigla_pais = '<SIGLA_DA_SELECAO>'
-)
-SELECT ano, COUNT(id_partida) AS total_jogos
-FROM jogos_selecao
-GROUP BY ano
-ORDER BY ano;
-
-TREINAMENTO DE PADRÕES:
+PADRÕES/EXEMPLOS RECUPERADOS POR INTENÇÃO:
 __TREINAMENTO_DINAMICO__
 
-EXEMPLOS (a resposta é SEMPRE somente o SQL ou a sentinela, sem qualquer texto extra):
+EXEMPLOS BASE (resposta é SEMPRE somente o SQL ou a sentinela):
 
 Pergunta: Quantos jogos houve na copa de 2022?
 SELECT COUNT(*) AS total_partidas FROM partida WHERE ano = 2022;
 
-Pergunta: Faça um poema.
-{SENTINELA_NAO_SEI}
-
-Pergunta: Qual o telefone do presidente da FIFA?
-{SENTINELA_NAO_SEI}
-
 Pergunta: Quem foi campeão em 2022?
 SELECT p.nome_pais FROM edicao_da_copa e JOIN selecao s ON e.campea = s.id_selecao AND e.ano = s.ano JOIN pais p ON s.sigla_pais = p.sigla_pais WHERE e.ano = 2022;
 
-Pergunta: Liste as seleções da copa de 2022.
-SELECT p.nome_pais FROM selecao s JOIN pais p ON s.sigla_pais = p.sigla_pais WHERE s.ano = 2022 ORDER BY p.nome_pais;
+Pergunta: Quem foi campeão em 1994?
+{SENTINELA_NAO_SEI}
 
-Pergunta: Quais foram os artilheiros da copa de 2022?
-SELECT j.nome_jogador, p.nome_pais, c.gols_marcados FROM convocacao c JOIN jogador j ON c.id_jogador = j.id_jogador JOIN selecao s ON c.id_selecao = s.id_selecao AND c.ano = s.ano JOIN pais p ON s.sigla_pais = p.sigla_pais WHERE c.ano = 2022 AND c.gols_marcados > 0 ORDER BY c.gols_marcados DESC LIMIT 10;
-
-Pergunta: Qual a quantidade máxima de jogos feita por uma seleção em uma edição de Copa do Mundo?
-SELECT s.ano, p.nome_pais, COUNT(pt.id_partida) AS total_jogos FROM selecao s JOIN pais p ON s.sigla_pais = p.sigla_pais JOIN partida pt ON pt.ano = s.ano AND (pt.selecao1 = s.id_selecao OR pt.selecao2 = s.id_selecao) GROUP BY s.ano, p.nome_pais ORDER BY total_jogos DESC LIMIT 1;
-
-Pergunta: Qual seleção fez mais jogos em uma edição de copa?
-SELECT s.ano, p.nome_pais, COUNT(pt.id_partida) AS total_jogos FROM selecao s JOIN pais p ON s.sigla_pais = p.sigla_pais JOIN partida pt ON pt.ano = s.ano AND (pt.selecao1 = s.id_selecao OR pt.selecao2 = s.id_selecao) GROUP BY s.ano, p.nome_pais ORDER BY total_jogos DESC LIMIT 1;
+Pergunta: Faça um poema.
+{SENTINELA_NAO_SEI}
 """.strip()
 
 
@@ -320,56 +268,108 @@ def _tokens(texto):
     return {tok for tok in _normalizar_texto(texto).split() if len(tok) > 2 and tok not in ignorar}
 
 
-def _treinamento_relevante(pergunta, limite=10):
-    """Seleciona trechos relevantes do documento de treinamento.
+def _extrair_padroes_canonicos(documento):
+    """Parser de blocos `### <nome>` ... (até o próximo `###` ou `---`).
 
-    O arquivo completo tem mais de 100 padrões, mas modelos locais pequenos ficam
-    lentos quando todo o material entra em toda chamada. Esta seleção é lexical:
-    não responde a pergunta nem escolhe SQL pronto, só reduz o contexto enviado.
+    Retorna lista de dicts {nome, gatilhos, texto_completo}, onde `gatilhos` são
+    os tokens normalizados do bloco USAR QUANDO.
+    """
+    secao_padroes = re.search(
+        r"## PADRÕES CANÔNICOS\s*(.*?)(?=^---|\Z)",
+        documento,
+        re.DOTALL | re.MULTILINE,
+    )
+    if not secao_padroes:
+        return []
+
+    padroes = []
+    for match in re.finditer(
+        r"### (\S+)\s*\n(.*?)(?=^### |\Z)",
+        secao_padroes.group(1),
+        re.DOTALL | re.MULTILINE,
+    ):
+        nome = match.group(1).strip()
+        corpo = match.group(2).strip()
+
+        usar_quando = re.search(r"USAR QUANDO:\s*(.*?)(?:OBRIGATÓRIO|SQL_TEMPLATE|\Z)", corpo, re.DOTALL)
+        gatilhos = _tokens(usar_quando.group(1) if usar_quando else "")
+
+        padroes.append({
+            "nome": nome,
+            "gatilhos": gatilhos,
+            "texto": f"### {nome}\n{corpo}",
+        })
+    return padroes
+
+
+_PADROES_CANONICOS = _extrair_padroes_canonicos(TREINAMENTO_IA)
+
+
+def _treinamento_relevante(pergunta, limite_perguntas=8, limite_padroes=2):
+    """Seleciona padrões canônicos e perguntas de treino relevantes.
+
+    Estratégia lexical (sem embeddings):
+    1. Padrões canônicos: rank por match de tokens entre pergunta e gatilhos
+       do "USAR QUANDO". Top N injetado COMPLETO (regras + SQL_TEMPLATE).
+    2. Perguntas de treino: rank por match de tokens entre pergunta e linha.
+       Top M injetado como lista curta.
     """
     if not TREINAMENTO_IA:
         return ""
 
-    marcador_perguntas = "## Perguntas de treino por padrão"
-    marcador_armadilhas = "## Armadilhas comuns"
+    termos_pergunta = _tokens(pergunta)
+    if not termos_pergunta:
+        return ""
 
+    # 1. Padrões canônicos por gatilho
+    ranqueados_padroes = []
+    for padrao in _PADROES_CANONICOS:
+        score = len(termos_pergunta & padrao["gatilhos"])
+        if score >= 2:  # exige pelo menos 2 tokens em comum para evitar match espúrio
+            ranqueados_padroes.append((score, padrao))
+    ranqueados_padroes.sort(key=lambda x: x[0], reverse=True)
+    padroes_selecionados = [p["texto"] for _score, p in ranqueados_padroes[:limite_padroes]]
+
+    # 2. Perguntas de treino
+    marcador_perguntas = "## PERGUNTAS DE TREINO"
+    marcador_armadilhas = "## ARMADILHAS COMUNS"
     perguntas_texto = ""
     armadilhas = ""
-
     if marcador_perguntas in TREINAMENTO_IA:
-        _cabecalho, resto = TREINAMENTO_IA.split(marcador_perguntas, 1)
-        if marcador_armadilhas in resto:
-            perguntas_texto, armadilhas = resto.split(marcador_armadilhas, 1)
-        else:
-            perguntas_texto = resto
+        _cab, resto = TREINAMENTO_IA.split(marcador_perguntas, 1)
+        if marcador_armadilhas in _cab:
+            armadilhas = _cab.split(marcador_armadilhas, 1)[1]
+        perguntas_texto = resto
 
     perguntas = [
         linha.strip()
         for linha in perguntas_texto.splitlines()
         if re.match(r"^\d+\.", linha.strip())
     ]
-
-    termos_pergunta = _tokens(pergunta)
     ranqueadas = []
     for indice, linha in enumerate(perguntas):
         termos_linha = _tokens(linha)
         score = len(termos_pergunta & termos_linha)
         if score:
             ranqueadas.append((score, -indice, linha))
+    perguntas_selecionadas = [
+        linha for _score, _idx, linha in sorted(ranqueadas, reverse=True)[:limite_perguntas]
+    ]
 
-    selecionadas = [linha for _score, _neg_indice, linha in sorted(ranqueadas, reverse=True)[:limite]]
+    # 3. Armadilhas relevantes
+    armadilhas_relevantes = []
+    for linha in armadilhas.splitlines():
+        linha = linha.strip()
+        if linha.startswith("-") and (_tokens(linha) & termos_pergunta):
+            armadilhas_relevantes.append(linha)
 
     partes = []
-    if selecionadas:
-        partes.append("## Perguntas de treino relevantes\n" + "\n".join(selecionadas))
-    if armadilhas.strip():
-        armadilhas_relevantes = []
-        for linha in armadilhas.splitlines():
-            linha = linha.strip()
-            if linha.startswith("-") and (_tokens(linha) & termos_pergunta):
-                armadilhas_relevantes.append(linha)
-        if armadilhas_relevantes:
-            partes.append("## Armadilhas comuns relevantes\n" + "\n".join(armadilhas_relevantes[:6]))
+    if padroes_selecionados:
+        partes.append("PADRÕES CANÔNICOS RELEVANTES:\n\n" + "\n\n".join(padroes_selecionados))
+    if perguntas_selecionadas:
+        partes.append("PERGUNTAS DE TREINO RELEVANTES:\n" + "\n".join(perguntas_selecionadas))
+    if armadilhas_relevantes:
+        partes.append("ARMADILHAS RELEVANTES:\n" + "\n".join(armadilhas_relevantes[:5]))
     return "\n\n".join(partes).strip()
 
 

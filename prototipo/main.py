@@ -263,6 +263,16 @@ def consulta_ia(db):
             except (ConnectionError, ValueError, ollama_client.RespostaNaoSei, psycopg2.Error) as e:
                 print(f"\n[INFO] Revisão automática não encontrou alternativa válida: {e}")
         exibir_resultado(colunas, linhas)
+        if colunas and not linhas:
+            anos = ", ".join(str(a) for a in ollama_client.ANOS_DISPONIVEIS)
+            print(
+                f"\n⚠️  Consulta executou mas não retornou linhas.\n"
+                f"   A base só tem dados das Copas de {anos}.\n"
+                f"   Verifique se o ano/seleção citado está nesse conjunto."
+            )
+        else:
+            anos = ", ".join(str(a) for a in ollama_client.ANOS_DISPONIVEIS)
+            print(f"\n📅 Base: Copas de {anos} ({len(ollama_client.ANOS_DISPONIVEIS)} edições).")
     except psycopg2.Error as e:
         print(f"\n[ERRO SQL] O SQL gerado é inválido ou inseguro:")
         print(f"   {e}")
