@@ -147,67 +147,41 @@ CREATE TABLE evento_de_jogo (
 """
 
 SYSTEM_PROMPT = f"""
-Você é um conversor de linguagem natural para SQL PostgreSQL.
-REGRA ABSOLUTA: sua resposta deve conter SOMENTE o comando SQL, nada mais.
-Nunca escreva texto explicativo, nunca use markdown, nunca use cercas ```.
-Se a pergunta não puder ser respondida com o schema, responda exatamente:
-SELECT 'Não é possível responder com o schema disponível' AS mensagem;
+Você é um assistente especializado em SQL PostgreSQL.
 
-Schema do banco de dados Copa do Mundo:
+Use exclusivamente o seguinte esquema relacional:
 
 {ESQUEMA_SQL}
 
-Convenções do schema:
-- PK de `edicao_da_copa` é `ano` (INTEGER). Não existe coluna `id_edicao`.
-- Países: `sigla_pais` VARCHAR(3), ex.: 'BRA', 'ARG', 'FRA'.
-- `selecao` tem PK composta `(id_selecao, ano)`. Em todo JOIN use OS DOIS campos.
-- `partida` usa `selecao1`/`selecao2` e divide gols em três pares de colunas:
-  `gols_regulamentares_*`, `gols_prorrogacao_*`, `gols_penaltis_*`.
-- `partida.id_vencedor` já guarda o vencedor de eliminatórias.
-- `convocacao.gols_marcados` é atualizado por trigger — use para artilheiros.
-- Fases: 'Fase de Grupos', 'Oitavas de Final', 'Quartas de Final',
-  'Semifinais', 'Disputa de Terceiro Lugar', 'Final'.
-- Eventos: 'Gol', 'Gol Contra', 'Pênalti Convertido',
-  'Cartão Amarelo', 'Cartão Vermelho', 'Substituição'.
-- Use UPPER(...) = UPPER(%s) ou ILIKE para comparações de texto.
-
-Exemplos — resposta é APENAS o SQL, sem nenhum texto antes ou depois:
-
-Pergunta: Quem foi campeão em 2022?
-SELECT p.nome_pais FROM edicao_da_copa e JOIN selecao s ON e.campea = s.id_selecao AND e.ano = s.ano JOIN pais p ON s.sigla_pais = p.sigla_pais WHERE e.ano = 2022;
-
-Pergunta: Quantos jogos têm em uma copa?
-SELECT COUNT(*) AS total_partidas FROM partida WHERE ano = 2022;
-
-Pergunta: Quais jogadores do Brasil foram convocados em 2026?
-SELECT j.nome_jogador, c.numero_camisa FROM convocacao c JOIN jogador j ON c.id_jogador = j.id_jogador JOIN selecao s ON c.id_selecao = s.id_selecao AND c.ano = s.ano WHERE c.ano = 2026 AND UPPER(s.sigla_pais) = 'BRA' ORDER BY c.numero_camisa;
-
-Pergunta: Quantos gols Messi fez na Copa de 2022?
-SELECT c.gols_marcados FROM convocacao c JOIN jogador j ON c.id_jogador = j.id_jogador WHERE c.ano = 2022 AND j.nome_jogador ILIKE '%Messi%';
-
-Pergunta: Quantas seleções participaram da copa de 1998?
-SELECT COUNT(*) AS total_selecoes FROM selecao WHERE ano = 1998;
+Regras:
+- Gere apenas consultas SQL compatíveis com PostgreSQL.
+- Não invente tabelas nem atributos.
+- Se a pergunta não puder ser respondida com esse esquema, diga que não é possível.
+- Quando gerar SQL, retorne apenas o comando SQL, sem explicações.
 """.strip()
 
 
-_PALAVRAS_SQL = re.compile(
-    r"^\s*(SELECT|WITH|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|EXPLAIN)\b",
+_INICIO_SQL = re.compile(
+    r"(SELECT|WITH|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|EXPLAIN)\b",
     re.IGNORECASE,
 )
 
 
 def _extrair_sql(texto):
-    texto = texto.strip()
+    bruto = texto.strip()
+    texto = bruto
     match = re.search(r"```(?:sql)?\s*(.*?)```", texto, re.DOTALL | re.IGNORECASE)
     if match:
         texto = match.group(1).strip()
     texto = re.sub(r"^(SQL\s*:\s*)", "", texto, flags=re.IGNORECASE)
-    texto = texto.strip().rstrip(";") + ";"
-    if not _PALAVRAS_SQL.match(texto):
+    match = _INICIO_SQL.search(texto)
+    if not match:
         raise ValueError(
-            "O modelo não gerou SQL válido. Tente reformular a pergunta de forma "
-            "mais específica (ex.: 'Quantos jogos houve na copa de 2022?')."
+            "O modelo não gerou SQL válido. Resposta recebida:\n"
+            f"---\n{bruto}\n---\n"
+            "Tente reformular a pergunta de forma mais específica."
         )
+    texto = texto[match.start():].strip().rstrip(";") + ";"
     return texto
 
 
